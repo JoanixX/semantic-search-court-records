@@ -8,7 +8,7 @@ import (
 )
 
 // Expediente simula el registro judicial extraído del TC
-type Expediente struct {
+type Expediente struct { 
 	ID    int
 	Texto string
 }
