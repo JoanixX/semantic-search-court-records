@@ -1,6 +1,0 @@
-Validacion del dataset
-
-Archivo: datasets\processed\expedientes_tc_combined.csv
-Registros: 291538
-Objetivo: 200000
-Estado: cumple

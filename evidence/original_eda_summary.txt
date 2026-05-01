@@ -1,6 +1,0 @@
-Resumen del dataset original
-
-Archivo: datasets\raw\dataset.csv
-Filas: 149387
-Columnas: 21
-Columnas con nulos detectados: 15

@@ -1,7 +1,0 @@
-Resumen de feature engineering
-
-Archivo de entrada: datasets\processed\expedientes_tc_combined.csv
-Archivo de salida: datasets\processed\expedientes_tc_features.csv
-Filas procesadas: 291538
-Buckets de longitud: 2
-Buckets de palabras: 2

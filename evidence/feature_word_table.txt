@@ -1,6 +1,0 @@
-Buckets de palabras
-
-Bucket | Frecuencia
--------+-----------
-0-24   | 274871    
-25-49  | 16667     

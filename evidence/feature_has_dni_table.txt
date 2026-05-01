@@ -1,6 +1,0 @@
-Presencia de DNI
-
-Valor | Frecuencia
-------+-----------
-0     | 141538    
-1     | 150000    
