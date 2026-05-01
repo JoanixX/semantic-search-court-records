@@ -1,4 +1,0 @@
-Informe juridico de apoyo para procesamiento masivo.
-Se registran elementos de contexto, fechas, materias y resultados del fallo.
-El objetivo es disponer de una base documental para complementar registros.
-

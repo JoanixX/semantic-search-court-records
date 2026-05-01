@@ -1,4 +1,0 @@
-Resolucion vinculada a expedientes judiciales y normalizacion de metadatos.
-La parte recurrente presenta argumentos sobre vulneracion del debido proceso.
-El texto incluye referencias anonimizables y estructuras utiles para el scraper.
-
