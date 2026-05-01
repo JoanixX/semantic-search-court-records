@@ -1,0 +1,27 @@
+# Archivos y carpetas innecesarios para el repositorio
+.idea/
+.vscode/
+*.exe
+*.zip
+*.pdf
+
+# Entornos locales
+.venv/
+venv/
+.env
+
+# Cachés y bytecode
+.gocache/
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# Artefactos temporales comunes
+*.out
+coverage.out
+
+# Derivados generados por el flujo
+datasets/processed/*.csv
+datasets/processed/*.tsv
