@@ -22,6 +22,6 @@ venv/
 *.out
 coverage.out
 
-# Derivados generados por el flujo
-datasets/processed/*.csv
-datasets/processed/*.tsv
+# logs
+evidence/*.log
+evidence/*.txt
