@@ -20,22 +20,22 @@ type ExpedienteTC struct {
 }
 
 // FUNCION INTENSIVA (NLP / Regex): Anonimización de datos sensibles
+reDNI := regexp.MustCompile(`\b\d{8}\b`)
+
 func limpiarYAnonimizar(texto string) string {
 	// Simulamos carga de CPU (quitar esto en producción)
 	time.Sleep(1 * time.Millisecond) 
 	
 	// Expresión regular para buscar DNIs (8 dígitos consecutivos)
-	reDNI := regexp.MustCompile(`\b\d{8}\b`)
 	textoLimpio := reDNI.ReplaceAllString(texto, "[DNI_ANONIMIZADO]")
 	
-	// Aquí podrías agregar más regex (ej. nombres propios, correos, etc.)
 	return textoLimpio
 }
 
 // ==========================================
 // WORKER POOL CONCURRENTE
 // ==========================================
-func workerLimpiador(id int, jobs <-chan ExpedienteTC, wg *sync.WaitGroup, mu *sync.Mutex, contadorGlobal *int) {
+func workerLimpiador(id int, jobs <-chan ExpedienteTC, wg *sync.WaitGroup, contadorGlobal *int64) {
 	defer wg.Done()
 	
 	for exp := range jobs {
@@ -47,19 +47,16 @@ func workerLimpiador(id int, jobs <-chan ExpedienteTC, wg *sync.WaitGroup, mu *s
 		_ = textoAnonimizado 
 
 		// 2. SECCIÓN CRÍTICA: Actualizamos el contador de forma segura
-		mu.Lock()
-		*contadorGlobal++
-		mu.Unlock()
+		atomic.AddInt64(contadorGlobal, 1)
 	}
 }
 
 func main() {
 	rutaArchivoCSV := "./datasets/raw/expedientes_tc_masivo.csv"
-	numWorkers := 8 
+	numWorkers := 8
 
 	var wg sync.WaitGroup
-	var mu sync.Mutex
-	anonimizadosTotal := 0
+	var contadorGlobal int64 // cambiado a int64 para atomic
 
 	inicio := time.Now()
 	fmt.Println("=== INICIANDO PIPELINE CONCURRENTE DE LIMPIEZA NLP ===")
@@ -86,7 +83,7 @@ func main() {
 	// 4. Iniciar las Goroutines (Workers)
 	for w := 1; w <= numWorkers; w++ {
 		wg.Add(1)
-		go workerLimpiador(w, jobs, &wg, &mu, &anonimizadosTotal)
+		go workerLimpiador(w, jobs, &wg, &contadorGlobal)
 	}
 
 	// 5. Ingesta: Leer el CSV fila por fila y enviar al canal (Productor)
@@ -127,6 +124,7 @@ func main() {
 	fmt.Printf("Total de filas leídas: %d\n", filasLeidas)
 	fmt.Printf("Total de expedientes anonimizados: %d\n", anonimizadosTotal)
 	fmt.Printf("Tiempo total de procesamiento: %v\n", tiempoTotal)
+
 	if tiempoTotal.Seconds() > 0 {
 		rendimiento := float64(anonimizadosTotal) / tiempoTotal.Seconds()
 		fmt.Printf("Rendimiento: %.2f registros por segundo\n", rendimiento)
