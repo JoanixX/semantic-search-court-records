@@ -1,0 +1,7 @@
+Perfil del dataset actual
+
+dataset.csv: 149387 registros
+expedientes_tc_masivo.csv: 50000 registros
+
+Total combinado: 199387 registros
+Brecha respecto a 1,000,000: 800613 registros

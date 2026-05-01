@@ -1,0 +1,19 @@
+[workflow] 2026-05-01 13:15:33,908 INFO Ejecutando: C:\Users\practicante.coe03\AppData\Local\Programs\Python\Python311\python.exe -m unittest discover -s tests/python -p test_*.py
+[workflow] 2026-05-01 13:15:34,130 INFO Comando completado correctamente
+[workflow] 2026-05-01 13:15:34,132 INFO Ejecutando: go test ./tests/unit ./tests/integration
+[workflow] 2026-05-01 13:15:35,019 INFO Comando Go completado correctamente
+[workflow] 2026-05-01 13:15:35,020 INFO Ejecutando: C:\Users\practicante.coe03\AppData\Local\Programs\Python\Python311\python.exe scripts/eda_original.py
+[workflow] 2026-05-01 13:15:36,421 INFO Comando completado correctamente
+[workflow] 2026-05-01 13:15:36,421 INFO Ejecutando: C:\Users\practicante.coe03\AppData\Local\Programs\Python\Python311\python.exe scrapers/augment_dataset.py --target-total 200000
+[workflow] 2026-05-01 13:15:39,319 INFO Comando completado correctamente
+[workflow] 2026-05-01 13:15:39,319 INFO Ejecutando: C:\Users\practicante.coe03\AppData\Local\Programs\Python\Python311\python.exe scripts/merge_datasets.py
+[workflow] 2026-05-01 13:15:44,785 INFO Comando completado correctamente
+[workflow] 2026-05-01 13:15:44,785 INFO Ejecutando: C:\Users\practicante.coe03\AppData\Local\Programs\Python\Python311\python.exe scripts/validate_dataset.py --target 200000
+[workflow] 2026-05-01 13:15:45,072 INFO Comando completado correctamente
+[workflow] 2026-05-01 13:15:45,072 INFO Ejecutando: C:\Users\practicante.coe03\AppData\Local\Programs\Python\Python311\python.exe scripts/eda_features.py
+[workflow] 2026-05-01 13:15:50,346 INFO Comando completado correctamente
+[workflow] 2026-05-01 13:15:50,348 INFO Ejecutando: go run ./cmd/pipeline -csv datasets/raw/expedientes_tc_masivo.csv -workers 8 -delay-ms 1 -log-every 5000
+[workflow] 2026-05-01 13:17:19,216 INFO Comando Go completado correctamente
+[workflow] 2026-05-01 13:17:19,217 INFO Ejecutando: go run ./cmd/benchmark -records 1000 -runs 1 -delay-ms 2
+[workflow] 2026-05-01 13:17:22,588 INFO Comando Go completado correctamente
+[workflow] 2026-05-01 13:17:22,588 INFO Flujo completado

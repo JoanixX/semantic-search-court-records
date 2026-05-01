@@ -1,0 +1,10 @@
+Resumen del flujo controlado
+
+Tests: ok
+EDA original: ok
+Scraper: ok
+Merge: ok
+Validacion: ok
+Features: ok
+Go pipeline: ok
+Go benchmark: ok

@@ -1,0 +1,14 @@
+Top 10 columnas con nulos
+
+Columna           | Nulos 
+------------------+-------
+RESUMEN_SENTENCIA | 149387
+PUB_PERUANO       | 110237
+ESPECIFICA        | 91596 
+FEC_VISTA         | 66184 
+SUB_MATERIA       | 52719 
+FALLO             | 50770 
+MATERIA           | 39490 
+SALA_ORIGEN       | 13666 
+SALA              | 10839 
+FEC_DEVPJ         | 10395 

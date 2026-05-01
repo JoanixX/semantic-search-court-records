@@ -1,0 +1,48 @@
+=== PIPELINE ===
+Command: go run ./cmd/pipeline -csv datasets/raw/expedientes_tc_masivo.csv -workers 8 -delay-ms 1 -log-every 5000
+Return code: 0
+--- STDOUT ---
+[pipeline] 2026/05/01 13:15:50 iniciando pipeline concurrente de limpieza y anonimizaciÃ³n
+[pipeline] 2026/05/01 13:15:58 [secuencial] procesados=5000
+[pipeline] 2026/05/01 13:16:06 [secuencial] procesados=10000
+[pipeline] 2026/05/01 13:16:14 [secuencial] procesados=15000
+[pipeline] 2026/05/01 13:16:22 [secuencial] procesados=20000
+[pipeline] 2026/05/01 13:16:29 [secuencial] procesados=25000
+[pipeline] 2026/05/01 13:16:37 [secuencial] procesados=30000
+[pipeline] 2026/05/01 13:16:46 [secuencial] procesados=35000
+[pipeline] 2026/05/01 13:16:53 [secuencial] procesados=40000
+[pipeline] 2026/05/01 13:17:01 [secuencial] procesados=45000
+[pipeline] 2026/05/01 13:17:09 [secuencial] procesados=50000
+[pipeline] 2026/05/01 13:17:10 [worker=5] procesados_globales=5000
+[pipeline] 2026/05/01 13:17:11 [worker=5] procesados_globales=10000
+[pipeline] 2026/05/01 13:17:12 [worker=3] procesados_globales=15000
+[pipeline] 2026/05/01 13:17:13 [worker=4] procesados_globales=20000
+[pipeline] 2026/05/01 13:17:14 [worker=6] procesados_globales=25000
+[pipeline] 2026/05/01 13:17:15 [worker=2] procesados_globales=30000
+[pipeline] 2026/05/01 13:17:16 [worker=7] procesados_globales=35000
+[pipeline] 2026/05/01 13:17:17 [worker=1] procesados_globales=40000
+[pipeline] 2026/05/01 13:17:18 [worker=2] procesados_globales=45000
+[pipeline] 2026/05/01 13:17:19 [worker=3] procesados_globales=50000
+
+==============================================
+RESULTADOS FINALES
+==============================================
+Registros cargados:    50000
+Secuencial:            1m18.5837779s
+Concurrente:           9.7024458s
+Speedup:               8.10x
+Workers:               8
+==============================================
+--- STDERR ---
+
+
+=== BENCHMARK ===
+Command: go run ./cmd/benchmark -records 1000 -runs 1 -delay-ms 2
+Return code: 0
+--- STDOUT ---
+Workers | Secuencial(s) | Concurrente(s) | Speedup
+---------------------------------------------------
+      8 |        2.5228 |        0.3192 |   7.90x
+--- STDERR ---
+
+

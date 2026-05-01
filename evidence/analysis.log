@@ -1,0 +1,28 @@
+[eda-original] 2026-05-01 13:15:35,108 INFO Iniciando EDA original para datasets\raw\dataset.csv
+[eda-original] 2026-05-01 13:15:35,482 INFO Filas analizadas: 50000
+[eda-original] 2026-05-01 13:15:35,861 INFO Filas analizadas: 100000
+[eda-original] 2026-05-01 13:15:36,401 INFO Analisis original completado: 149387 filas
+=== ORIGINAL EDA ===
+Command: C:\Users\practicante.coe03\AppData\Local\Programs\Python\Python311\python.exe scripts/eda_original.py
+Return code: 0
+--- STDOUT ---
+
+--- STDERR ---
+[eda-original] 2026-05-01 13:15:35,108 INFO Iniciando EDA original para datasets\raw\dataset.csv
+[eda-original] 2026-05-01 13:15:35,482 INFO Filas analizadas: 50000
+[eda-original] 2026-05-01 13:15:35,861 INFO Filas analizadas: 100000
+[eda-original] 2026-05-01 13:15:36,401 INFO Analisis original completado: 149387 filas
+
+[features] 2026-05-01 13:15:46,501 INFO Features procesadas: 100000
+[features] 2026-05-01 13:15:48,365 INFO Features procesadas: 200000
+[features] 2026-05-01 13:15:50,335 INFO Feature engineering completado: 291538 filas
+=== FEATURE EDA ===
+Command: C:\Users\practicante.coe03\AppData\Local\Programs\Python\Python311\python.exe scripts/eda_features.py
+Return code: 0
+--- STDOUT ---
+
+--- STDERR ---
+[features] 2026-05-01 13:15:46,501 INFO Features procesadas: 100000
+[features] 2026-05-01 13:15:48,365 INFO Features procesadas: 200000
+[features] 2026-05-01 13:15:50,335 INFO Feature engineering completado: 291538 filas
+

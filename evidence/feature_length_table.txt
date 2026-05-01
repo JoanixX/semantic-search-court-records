@@ -1,0 +1,6 @@
+Buckets de longitud de texto
+
+Bucket  | Frecuencia
+--------+-----------
+100-199 | 150000    
+0-99    | 141538    

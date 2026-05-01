@@ -1,0 +1,21 @@
+=== PYTHON TESTS ===
+Command: C:\Users\practicante.coe03\AppData\Local\Programs\Python\Python311\python.exe -m unittest discover -s tests/python -p test_*.py
+Return code: 0
+--- STDOUT ---
+
+--- STDERR ---
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.036s
+
+OK
+
+=== GO TESTS ===
+Command: go test ./tests/unit ./tests/integration
+Return code: 0
+--- STDOUT ---
+ok  	semantic-search-court-records/tests/unit	(cached)
+ok  	semantic-search-court-records/tests/integration	(cached)
+--- STDERR ---
+
+
