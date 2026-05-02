@@ -5,6 +5,9 @@
 *.zip
 *.pdf
 
+# Se coloca el csv porque es muy pesado
+datasets/processed/*.csv
+
 # Entornos locales
 .venv/
 venv/
