@@ -63,8 +63,8 @@ def merge_csvs(original_csv: Path, complement_csv: Path, output_csv: Path, logge
 def main() -> None:
     parser = argparse.ArgumentParser(description="Fusiona dataset original y complementado")
     parser.add_argument("--original", default="datasets/raw/dataset.csv", help="CSV original")
-    parser.add_argument("--complement", default="datasets/processed/expedientes_tc_complemento.csv", help="CSV complementado")
-    parser.add_argument("--output", default="datasets/processed/expedientes_tc_combined.csv", help="CSV combinado")
+    parser.add_argument("--complement", default="datasets/processed/official_tc_harvest.csv", help="CSV oficial harvest")
+    parser.add_argument("--output", default="datasets/processed/combined_official_dataset.csv", help="CSV combinado")
     args = parser.parse_args()
 
     logger = setup_logger("merge", EVIDENCE_DIR / "prep.log")

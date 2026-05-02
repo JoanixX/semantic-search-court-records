@@ -93,7 +93,7 @@ def main() -> int:
     run_command([sys.executable, "scripts/validate_dataset.py", "--target", str(args.target_total)], prep_log, logger, "VALIDATION")
     run_command([sys.executable, "scripts/eda_features.py"], analysis_log, logger, "FEATURE EDA")
 
-    go_env = ["-csv", "datasets/raw/expedientes_tc_masivo.csv", "-workers", str(args.workers), "-delay-ms", str(args.delay_ms), "-log-every", "5000"]
+    go_env = ["-csv", "datasets/processed/combined_official_dataset.csv", "-workers", str(args.workers), "-delay-ms", str(args.delay_ms), "-log-every", "5000"]
     run_go_command(["go", "run", "./cmd/pipeline", *go_env], go_log, logger, "PIPELINE")
     run_go_command(["go", "run", "./cmd/benchmark", "-records", str(args.benchmark_records), "-runs", str(args.benchmark_runs), "-delay-ms", "2"], go_log, logger, "BENCHMARK")
 
