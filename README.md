@@ -67,7 +67,7 @@ python scripts/eda_features.py
 6. Go real:
 
 ```bash
-go run ./cmd/pipeline -csv datasets/raw/expedientes_tc_masivo.csv -workers 8 -delay-ms 1 -log-every 5000
+go run ./cmd/pipeline -csv datasets/processed/combined_official_dataset.csv -workers 8 -delay-ms 1 -log-every 5000
 go run ./cmd/benchmark -records 10000 -runs 3 -delay-ms 2
 ```
 
@@ -104,4 +104,4 @@ Toda la documentacion complementaria esta centralizada en [docs/README.md](docs/
 
 - Dataset combinado actual: 199,387 registros.
 - Brecha respecto a 1,000,000: 800,613 registros.
-- El scraper `scrapers/augment_dataset.py` genera solo registros nuevos y evita duplicar claves existentes.
+- El scraper `scrapers/augment_dataset.py` extrae solo datos reales de fuentes oficiales y avisa si no alcanza el objetivo.
