@@ -14,7 +14,7 @@ from scripts.common import EVIDENCE_DIR, count_csv_rows, setup_logger, write_kv_
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Valida el total de registros")
-    parser.add_argument("--input", default="datasets/processed/expedientes_tc_combined.csv", help="CSV combinado")
+    parser.add_argument("--input", default="datasets/processed/combined_official_dataset.csv", help="CSV combinado")
     parser.add_argument("--target", type=int, default=1_000_000, help="umbral minimo")
     args = parser.parse_args()
 
