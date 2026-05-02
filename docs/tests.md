@@ -20,7 +20,7 @@ go test ./tests/unit ./tests/integration
 
 Pruebas disponibles:
 
-- `tests/python/test_augment_dataset.py`
+- `tests/python/test_official_scraper.py`
 
 Ejecucion:
 
