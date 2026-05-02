@@ -2,19 +2,59 @@
 
 ## Objetivo
 
-El scraper `scrapers/augment_dataset.py` complementa el dataset sin duplicar registros ya existentes.
+El scraper `scrapers/augment_dataset.py` extrae documentos reales desde fuentes oficiales del gobierno peruano y construye un complemento de dataset sin inventar campos.
 
 ## Que hace
 
-- lee documentos en `datasets/raw/scraper_sources/`.
-- extrae texto de `.txt`, `.md`, `.html` y `.pdf`.
-- genera filas nuevas hasta alcanzar el objetivo definido.
-- evita claves repetidas usando hash SHA-256.
+- parte de seeds oficiales definidos en `datasets/raw/official_sources.txt`.
+- crawlea dominios oficiales del TC y de Datos Abiertos.
+- extrae texto desde HTML, PDF, CSV, ZIP, XLSX y JSON.
+- descubre endpoints y descargas reales dentro de HTML, JSON y archivos anidados.
+- llena solo los campos que el documento realmente contiene.
+- avisa si el numero de registros reales obtenidos no alcanza el objetivo.
+- salta contenido binario o HTML malformado y deja la traza en `evidence/prep.log` y en `evidence/official_harvest_summary.txt`.
+- registra las semillas con rendimiento cero para descartarlas en el siguiente intento y priorizar las que si generan filas.
+- procesa XLSX grandes de forma incremental y limita filas por hoja para evitar que un archivo pesado detenga todo el crawl.
+- corta la ejecucion cuando alcanza `--target-total`, por lo que las pruebas pequenas no recorren fuentes innecesarias.
+
+El complemento oficial se escribe en `datasets/processed/official_tc_harvest.csv` y luego se fusiona en `datasets/processed/combined_official_dataset.csv`.
 
 ## Como ejecutar
 
 ```bash
 python scrapers/augment_dataset.py --target-total 1000000
+```
+
+Para una corrida completa con archivos tabulares grandes:
+
+```bash
+python scrapers/augment_dataset.py --target-total 1000000 --timeout 200 --max-pages 1000 --max-rows-per-sheet 250000 --no-proxy-env
+```
+
+En pruebas con descargas directas oficiales, las seis primeras fuentes tabulares llegaron a 910393 registros reales:
+
+```bash
+python scrapers/augment_dataset.py --target-total 1000000 --timeout 120 --max-pages 6 --max-rows-per-sheet 500000 --no-proxy-env
+```
+
+Si falta poco para el millon, se debe aumentar `--max-pages` para permitir fuentes judiciales adicionales o repetir cuando Datos Abiertos no responda con errores temporales `502`.
+
+Si el entorno tiene variables de proxy rotas, se puede ignorar el proxy del sistema:
+
+```bash
+python scrapers/augment_dataset.py --target-total 1000000 --no-proxy-env
+```
+
+Si la red institucional exige un proxy autorizado:
+
+```bash
+python scrapers/augment_dataset.py --target-total 1000000 --proxy http://host:puerto
+```
+
+Para pruebas cortas:
+
+```bash
+python scrapers/augment_dataset.py --target-total 10 --timeout 8 --no-proxy-env
 ```
 
 ## Pruebas
@@ -23,4 +63,4 @@ python scrapers/augment_dataset.py --target-total 1000000
 python -m unittest discover -s tests/python -p "test_*.py"
 ```
 
-El scraper corre despues del EDA inicial y antes de la validacion del umbral.
+El scraper corre despues del EDA inicial y antes de la validacion del umbral. Si no hay suficientes documentos oficiales, el reporte de `evidence/official_harvest_summary.txt` lo deja claro.
