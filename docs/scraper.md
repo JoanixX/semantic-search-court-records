@@ -17,7 +17,7 @@ El scraper `scrapers/augment_dataset.py` extrae documentos reales desde fuentes 
 - procesa XLSX grandes de forma incremental y limita filas por hoja para evitar que un archivo pesado detenga todo el crawl.
 - corta la ejecucion cuando alcanza `--target-total`, por lo que las pruebas pequenas no recorren fuentes innecesarias.
 
-El complemento oficial se escribe en `datasets/processed/official_tc_harvest.csv` y luego se fusiona en `datasets/processed/combined_official_dataset.csv`.
+El complemento oficial se escribe en `datasets/processed/official_tc_harvest.csv` y luego se fusiona en el dataset procesado combinado.
 
 ## Como ejecutar
 
@@ -31,7 +31,7 @@ Para una corrida completa con archivos tabulares grandes:
 python scrapers/augment_dataset.py --target-total 1000000 --timeout 200 --max-pages 1000 --max-rows-per-sheet 250000 --no-proxy-env
 ```
 
-En pruebas con descargas directas oficiales, las seis primeras fuentes tabulares llegaron a 910393 registros reales:
+Para pruebas con descargas directas oficiales y mayor volumen, se puede limitar la exploracion inicial a fuentes tabulares:
 
 ```bash
 python scrapers/augment_dataset.py --target-total 1000000 --timeout 120 --max-pages 6 --max-rows-per-sheet 500000 --no-proxy-env

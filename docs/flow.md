@@ -23,7 +23,7 @@ Paramentros utiles:
 - `--workers 8`
 - `--delay-ms 1`
 - `--benchmark-runs 3`
-- `--benchmark-records 10000`
+- `--benchmark-records 20000`
 
 ## Trazabilidad
 

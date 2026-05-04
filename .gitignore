@@ -28,3 +28,8 @@ coverage.out
 # logs
 evidence/*.log
 evidence/*.txt
+
+# documentacion
+docs/pc2_guia_1_basica.md
+docs/pc2_guia_2_intermedia.md
+docs/pc2_guia_3_tecnica_tests_demo.md
