@@ -7,6 +7,7 @@ import io
 import logging
 import posixpath
 import re
+import time
 import unicodedata
 import zipfile
 from collections import deque
@@ -1079,6 +1080,7 @@ def crawl_official_sources(
         session.proxies.update({"http": proxy, "https": proxy})
     queue = deque(_normalize_url(url) for url in seed_urls if url)
     seen: set[str] = set()
+       
     harvested: list[HarvestedRow] = []
     summary = HarvestSummary(seeds=len(queue))
 
@@ -1087,6 +1089,7 @@ def crawl_official_sources(
         if current in seen or not _is_official_url(current):
             continue
         seen.add(current)
+        
         summary.visited_pages += 1
         source_key = current
         before_count = summary.harvested_rows
@@ -1244,6 +1247,7 @@ def main() -> int:
         max_rows_per_sheet=args.max_rows_per_sheet,
     )
     write_harvest_csv(rows, resolve_repo_path(args.output_csv))
+    
 
     warning = finalize_summary(summary, args.target_total)
     if summary.visited_pages >= args.max_pages and summary.harvested_rows < args.target_total:
