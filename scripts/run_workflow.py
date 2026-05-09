@@ -89,13 +89,25 @@ def main() -> int:
 
     run_command([sys.executable, "scripts/eda_original.py"], analysis_log, logger, "ORIGINAL EDA")
     run_command([sys.executable, "scrapers/augment_dataset.py", "--target-total", str(args.target_total)], prep_log, logger, "SCRAPER")
-    run_command([sys.executable, "scripts/merge_datasets.py"], prep_log, logger, "MERGE")
-    run_command([sys.executable, "scripts/validate_dataset.py", "--target", str(args.target_total)], prep_log, logger, "VALIDATION")
-    run_command([sys.executable, "scripts/eda_features.py"], analysis_log, logger, "FEATURE EDA")
+    
+    # Use combine_processed_csvs instead of merge
+    run_command([sys.executable, "scripts/combine_processed_csvs.py"], prep_log, logger, "COMBINE CSVs")
+    
+    # Cleanup processed directory except processed_records.csv
+    processed_dir = Path("datasets/processed")
+    for f in processed_dir.glob("*.csv"):
+        if f.name != "processed_records.csv":
+            logger.info("Limpiando archivo redundante: %s", f.name)
+            f.unlink()
 
-    go_env = ["-csv", "datasets/processed/combined_official_dataset.csv", "-workers", str(args.workers), "-delay-ms", str(args.delay_ms), "-log-every", "5000"]
+    run_command([sys.executable, "scripts/validate_dataset.py", "--target", str(args.target_total), "--input", "datasets/processed/processed_records.csv"], prep_log, logger, "VALIDATION")
+    run_command([sys.executable, "scripts/eda_features.py", "--input", "datasets/processed/processed_records.csv"], analysis_log, logger, "FEATURE EDA")
+
+    go_env = ["-csv", "datasets/processed/processed_records.csv", "-workers", str(args.workers), "-delay-ms", str(args.delay_ms), "-log-every", "5000"]
     run_go_command(["go", "run", "./cmd/pipeline", *go_env], go_log, logger, "PIPELINE")
-    run_go_command(["go", "run", "./cmd/benchmark", "-records", str(args.benchmark_records), "-runs", str(args.benchmark_runs), "-delay-ms", "2"], go_log, logger, "BENCHMARK")
+    
+    # Run the new benchmark analysis
+    run_command([sys.executable, "scripts/analyze_benchmark.py", "--records", str(args.benchmark_records)], go_log, logger, "BENCHMARK ANALYSIS")
 
     write_kv_report(
         EVIDENCE_DIR / "workflow_summary.txt",
@@ -104,11 +116,11 @@ def main() -> int:
             ("Tests", "ok"),
             ("EDA original", "ok"),
             ("Scraper", "ok"),
-            ("Merge", "ok"),
+            ("Combine", "ok"),
             ("Validacion", "ok"),
             ("Features", "ok"),
             ("Go pipeline", "ok"),
-            ("Go benchmark", "ok"),
+            ("Benchmark Analysis", "ok"),
         ],
     )
     logger.info("Flujo completado")

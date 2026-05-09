@@ -17,7 +17,7 @@ El archivo recomendado para automatizar todo el flujo es:
 python scripts/run_workflow.py
 ```
 
-Paramentros utiles:
+Parametros utiles:
 
 - `--target-total 1000000`
 - `--workers 8`

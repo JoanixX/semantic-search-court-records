@@ -11,38 +11,40 @@ import (
 )
 
 func main() {
-	records := flag.Int("records", 10000, "cantidad de registros sintéticos")
-	runs := flag.Int("runs", 5, "cantidad de corridas")
+	records := flag.Int("records", 20000, "cantidad de registros sintéticos")
+	runs := flag.Int("runs", 3, "cantidad de corridas por configuración")
 	delayMs := flag.Int("delay-ms", 2, "costo simulado por registro en milisegundos")
 	flag.Parse()
 
-	logger := log.New(os.Stdout, "[benchmark] ", log.LstdFlags)
+	workerCounts := []int{1, 5, 10, 25, 40, 75, 100}
+	logger := log.New(os.Stderr, "", 0)
+
 	data := expedientes.GenerateSyntheticRecords(*records)
-	processor := expedientes.Processor{
-		Workers:       8,
-		ChunkSize:     128,
-		LogEvery:      2000,
+	
+	fmt.Println("Type,Workers,Records,Run,Duration")
+	
+	// Sequential benchmark
+	processorSeq := expedientes.Processor{
+		Workers:       1,
 		SimulatedCost: time.Duration(*delayMs) * time.Millisecond,
 		Logger:        logger,
 	}
-
-	var seqTimes []float64
-	var concTimes []float64
-
 	for i := 0; i < *runs; i++ {
-		seq := processor.Sequential(data)
-		seqTimes = append(seqTimes, seq.Duration.Seconds())
-	}
-	for i := 0; i < *runs; i++ {
-		conc := processor.Concurrent(data)
-		concTimes = append(concTimes, conc.Duration.Seconds())
+		res := processorSeq.Sequential(data)
+		fmt.Printf("Sequential,1,%d,%d,%.6f\n", *records, i+1, res.Duration.Seconds())
 	}
 
-	seqMean := expedientes.TrimmedMean(seqTimes)
-	concMean := expedientes.TrimmedMean(concTimes)
-	speedup := seqMean / concMean
-
-	fmt.Println("Workers | Secuencial(s) | Concurrente(s) | Speedup")
-	fmt.Println("---------------------------------------------------")
-	fmt.Printf("%7d | %13.4f | %13.4f | %6.2fx\n", processor.Workers, seqMean, concMean, speedup)
+	// Concurrent benchmark
+	for _, w := range workerCounts {
+		processor := expedientes.Processor{
+			Workers:       w,
+			ChunkSize:     128,
+			SimulatedCost: time.Duration(*delayMs) * time.Millisecond,
+			Logger:        logger,
+		}
+		for i := 0; i < *runs; i++ {
+			res := processor.Concurrent(data)
+			fmt.Printf("Concurrent,%d,%d,%d,%.6f\n", w, *records, i+1, res.Duration.Seconds())
+		}
+	}
 }

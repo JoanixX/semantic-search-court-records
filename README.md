@@ -86,19 +86,21 @@ Ademas, `evidence/workflow.log` conserva la bitacora maestra del orquestador.
 
 Toda la documentacion complementaria esta centralizada en [docs/README.md](docs/README.md).
 
-## Estructura actual
+## Estructura Actualizada
 
-- `cmd/pipeline/`: ejecucion principal del pipeline concurrente.
-- `cmd/benchmark/`: comparacion secuencial vs concurrente.
-- `internal/expedientes/`: logica reusable del procesamiento.
-- `scrapers/`: complementacion de datos y pruebas de scraping.
-- `scripts/`: orquestacion, EDA, validacion y fusion.
-- `tests/unit/`: pruebas unitarias de Go.
-- `tests/integration/`: pruebas de integracion de Go.
-- `tests/python/`: pruebas de Python.
+- `cmd/pipeline/`: ejecución principal del pipeline concurrente.
+- `cmd/benchmark/`: comparación secuencial vs concurrente (vía simulación).
+- `internal/expedientes/`: lógica reusable. ~~`generator.go` genera datos sintéticos para pruebas.~~
+- `scrapers/`: complementación de datos REALES.
+- `scripts/`: orquestación, EDA, validación y fusión.
+- `scripts/analyze_benchmark.py`: Genera logs y gráficos de rendimiento (Nuevo).
+- `tests/`: pruebas unitarias e integración.
 - `evidence/`: salidas reproducibles para el informe.
-- `datasets/raw/`: datos de entrada.
-- `datasets/processed/`: datos complementados o derivados.
+- `datasets/raw/`: datos de entrada originales.
+- `datasets/processed/processed_records.csv`: ÚNICO dataset final unificado (+1M).
+- ~~`notebooks/main.go`~~ (Eliminado)
+- ~~`notebooks/simulation_with_dummy.go`~~ (Eliminado)
+- ~~`notebooks/generacion_data.py`~~ (Eliminado)
 
 ## Evidencia actual
 

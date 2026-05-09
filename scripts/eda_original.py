@@ -1,13 +1,4 @@
-"""Analisis exploratorio inicial del dataset original.
-
-Este paso solo analiza el dataset base y genera evidencias iniciales:
-- nulos
-- distribuciones simples
-- graficos basicos
-"""
-
 from __future__ import annotations
-
 import argparse
 import csv
 import logging
@@ -19,7 +10,6 @@ if __package__ in {None, ""}:
     sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from scripts.common import EVIDENCE_DIR, GRAPHICS_DIR, make_png_bar_chart, ensure_dir, setup_logger, write_kv_report, write_text_table
-
 
 def analyze_original_dataset(csv_path: Path, logger: logging.Logger) -> None:
     with csv_path.open("r", encoding="utf-8", errors="ignore", newline="") as handle:
@@ -101,7 +91,6 @@ def analyze_original_dataset(csv_path: Path, logger: logging.Logger) -> None:
     )
 
     logger.info("Analisis original completado: %d filas", row_count)
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="EDA inicial del dataset original")
