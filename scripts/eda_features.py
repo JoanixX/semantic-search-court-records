@@ -1,7 +1,4 @@
-"""EDA posterior a la validacion del umbral, con feature engineering."""
-
 from __future__ import annotations
-
 import argparse
 import csv
 import logging
@@ -15,9 +12,7 @@ if __package__ in {None, ""}:
 
 from scripts.common import EVIDENCE_DIR, GRAPHICS_DIR, ensure_dir, make_png_bar_chart, safe_bucket, setup_logger, write_kv_report, write_text_table
 
-
 DNI_RE = re.compile(r"\b\d{8}\b")
-
 
 def derive_features(row: dict[str, str]) -> dict[str, str]:
     text = (row.get("RESUMEN_SENTENCIA") or row.get("TextoLegal") or row.get("TEXT") or "").strip()
@@ -35,7 +30,6 @@ def derive_features(row: dict[str, str]) -> dict[str, str]:
     enriched["feature_has_dni"] = "1" if dni_count > 0 else "0"
     enriched["feature_year"] = year
     return enriched
-
 
 def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> None:
     ensure_dir(output_csv.parent)
