@@ -14,7 +14,9 @@ COLUMN_MAPPING = {
     'ESPECIFICA': 'ESPECÍFICA',
 }
 
-PROCESSED_DIR = r'c:\Users\practicante.coe03\Desktop\Clases\Programacion Concurrente y Distribuida\semantic-search-court-records\datasets\processed'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(SCRIPT_DIR)
+PROCESSED_DIR = os.path.join(ROOT_DIR, 'datasets', 'processed')
 OUTPUT_FILE = os.path.join(PROCESSED_DIR, 'processed_records.csv')
 
 def combine_csvs():
