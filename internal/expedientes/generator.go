@@ -1,5 +1,11 @@
 package expedientes
 
+/*
+ * [SIMULACIÓN] Este archivo genera datos sintéticos.
+ * NO USAR PARA ANÁLISIS REALES DE JURISPRUDENCIA.
+ * Diseñado exclusivamente para benchmarks de rendimiento.
+ */
+
 import "fmt"
 
 var sampleSentences = []string{
