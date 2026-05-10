@@ -7,6 +7,7 @@
 
 # Se coloca el csv porque es muy pesado
 datasets/processed/*.csv
+official_tc_harvest.csv
 
 # Entornos locales
 .venv/
