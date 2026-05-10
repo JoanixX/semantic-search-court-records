@@ -1,0 +1,28 @@
+Resumen de harvest oficial
+
+Seeds: 34
+Visited pages: 6
+Harvested rows: 910393
+HTML docs: 0
+PDF docs: 0
+Tabular docs: 910393
+Archive docs: 6
+Text docs: 0
+Skipped non-doc pages: 0
+Missing to target: 89607
+Zero-yield sources: 0
+Productive sources: 6
+Warnings:
+- Solo se obtuvieron 910393 registros oficiales reales; faltan 89607 para llegar a 1000000.
+- Se alcanzo el limite de exploracion de 6 paginas antes de llegar a 1000000 registros. Aumenta --max-pages o agrega fuentes directas.
+
+Productive sources:
+- 158690: https://www.datosabiertos.gob.pe/sites/default/files/dataset_ing_23-02-2026.xlsx
+- 155700: https://www.datosabiertos.gob.pe/sites/default/files/dataset_ing.xlsx
+- 151282: https://www.datosabiertos.gob.pe/sites/default/files/dataset1_20250509.xlsx
+- 151282: https://www.datosabiertos.gob.pe/sites/default/files/dataset2_20250509.xlsx
+- 148101: https://www.datosabiertos.gob.pe/sites/default/files/dataset_pub_23-02-2026.xlsx
+- 145338: https://www.datosabiertos.gob.pe/sites/default/files/dataset_pub.xlsx
+
+Discarded sources:
+- none
