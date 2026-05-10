@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"semantic-search-court-records/internal/expedientes"
+	"semantic-search-court-records/internal/expedientes" 
 )
 
 func main() {

@@ -1,5 +1,4 @@
 package main
-
 import (
 	"encoding/csv"
 	"fmt"
@@ -10,8 +9,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"flag"
 )
-
 type ExpedienteTC struct {
 	TextoLegal string
 }
@@ -43,7 +42,6 @@ func ejecutarCorrida(numWorkers int, rutaArchivo string) float64 {
 	_, _ = lectorCSV.Read()
 
 	jobs := make(chan ExpedienteTC, 5000)
-
 	inicio := time.Now()
 
 	for w := 1; w <= numWorkers; w++ {
@@ -60,7 +58,6 @@ func ejecutarCorrida(numWorkers int, rutaArchivo string) float64 {
 			jobs <- ExpedienteTC{TextoLegal: fila[17]}
 		}
 	}
-
 	close(jobs)
 	wg.Wait()
 
@@ -68,22 +65,36 @@ func ejecutarCorrida(numWorkers int, rutaArchivo string) float64 {
 }
 
 func main() {
-	rutaArchivoCSV := "../datasets/processed/processed_records.csv"
-	corridas := 150
+	inputPath := flag.String("csv", "../../datasets/processed/processed_records.csv", "Ruta al archivo CSV")
+	outputPath := flag.String("output", "metricas_concurrente.csv", "Ruta de salida para el CSV de métricas")
+	corridas := flag.Int("runs", 100, "Corridas por cada nivel de workers")
+	maxWorkers := flag.Int("max-workers", 150, "Cantidad máxima de workers para el test")
+	stepWorkers := flag.Int("step", 15, "Incremento de workers por cada corrida")
+	flag.Parse()
 
-	fMetricas, err := os.Create("metricas_concurrente.csv")
+	// Validación
+	if *inputPath == "" {
+		log.Fatal("Error: La flag -input es obligatoria. Proporciona la ruta del dataset.")
+	}
+
+	fMetricas, err := os.Create(*outputPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer fMetricas.Close()
-	fMetricas.WriteString("goroutines,tiempo_segundos\n")
 
-	fmt.Println("=== INICIANDO 100 CORRIDAS (TEST DE ESCALABILIDAD) ===")
-	
-	// Corremos desde 1 hasta 100 goroutines
-	for workers := 15; workers <= corridas; workers+=15 {
-		tiempo := ejecutarCorrida(workers, rutaArchivoCSV)
-		fmt.Printf("Corrida con %3d Workers | Tiempo: %6.4f s\n", workers, tiempo)
-		fMetricas.WriteString(fmt.Sprintf("%d,%.4f\n", workers, tiempo))
+	// Identificamos los workers y la corrida específica en el mismo CSV
+	fMetricas.WriteString("workers,corrida,tiempo_segundos\n")
+	fmt.Printf("=== BENCHMARK CONCURRENTE (%d corridas por escalón) ===\n", *corridas)
+
+	for workers := *stepWorkers; workers <= *maxWorkers; workers += *stepWorkers {
+		fmt.Printf("\n--- Evaluando con %d Workers ---\n", workers)
+		
+		for i := 1; i <= *corridas; i++ {
+			tiempo := ejecutarCorrida(workers, *inputPath)
+			fmt.Printf("Corrida %3d | Tiempo: %6.4f s\n", i, tiempo)
+			fMetricas.WriteString(fmt.Sprintf("%d,%d,%.4f\n", workers, i, tiempo))
+		}
 	}
+	fmt.Println("\nResultados concurrentes guardados con éxito.")
 }
