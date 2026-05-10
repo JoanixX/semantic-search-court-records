@@ -1,21 +1,15 @@
-"""Funciones compartidas para orquestacion, trazabilidad y graficos PNG."""
-
 from __future__ import annotations
-
 import csv
 import logging
 from pathlib import Path
 from typing import Sequence
 
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE_DIR = REPO_ROOT / "evidence"
-GRAPHICS_DIR = EVIDENCE_DIR / "graphics"
-
+GRAPHICS_DIR = EVIDENCE_DIR / "features/new"
 
 def ensure_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
-
 
 def setup_logger(name: str, log_path: Path) -> logging.Logger:
     ensure_dir(log_path.parent)
@@ -35,18 +29,15 @@ def setup_logger(name: str, log_path: Path) -> logging.Logger:
     logger.propagate = False
     return logger
 
-
 def count_csv_rows(path: Path) -> int:
     with path.open("r", encoding="utf-8", errors="ignore", newline="") as handle:
         return max(0, sum(1 for _ in handle) - 1)
-
 
 def iter_csv_dicts(path: Path):
     with path.open("r", encoding="utf-8", errors="ignore", newline="") as handle:
         reader = csv.DictReader(handle)
         for row in reader:
             yield row
-
 
 def write_text_table(path: Path, title: str, headers: Sequence[str], rows: Sequence[Sequence[object]]) -> None:
     ensure_dir(path.parent)
@@ -64,13 +55,11 @@ def write_text_table(path: Path, title: str, headers: Sequence[str], rows: Seque
         lines.append(" | ".join(str(cell).ljust(widths[i]) for i, cell in enumerate(row)))
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-
 def write_kv_report(path: Path, title: str, items: Sequence[tuple[str, object]]) -> None:
     lines = [title, ""]
     for key, value in items:
         lines.append(f"{key}: {value}")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
 
 def make_png_bar_chart(path: Path, title: str, labels: Sequence[str], values: Sequence[float]) -> None:
     ensure_dir(path.parent)
@@ -115,9 +104,7 @@ def make_png_bar_chart(path: Path, title: str, labels: Sequence[str], values: Se
 
     image.save(path, format="PNG")
 
-
 def safe_bucket(value: int, bucket_size: int) -> str:
     start = (value // bucket_size) * bucket_size
     end = start + bucket_size - 1
     return f"{start}-{end}"
-

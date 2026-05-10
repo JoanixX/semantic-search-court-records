@@ -59,17 +59,18 @@ def main() -> int:
     logger.info("Inicio del flujo controlado")
 
     tests_log = EVIDENCE_DIR / "tests.log"
-    analysis_log = EVIDENCE_DIR / "analysis.log"
+    analysis_original_log = EVIDENCE_DIR / "features/original/analysis.log"
+    analysis_features_log = EVIDENCE_DIR / "features/analysis.log"
     prep_log = EVIDENCE_DIR / "prep.log"
     go_log = EVIDENCE_DIR / "go.log"
 
-    for log_path in [tests_log, analysis_log, prep_log, go_log, workflow_log]:
+    for log_path in [tests_log, analysis_original_log, analysis_features_log, prep_log, go_log, workflow_log]:
         log_path.write_text("", encoding="utf-8")
 
     run_command([sys.executable, "-m", "unittest", "discover", "-s", "tests/python", "-p", "test_*.py"], tests_log, logger, "PYTHON TESTS")
     run_go_command(["go", "test", "./tests/unit", "./tests/integration"], tests_log, logger, "GO TESTS")
 
-    run_command([sys.executable, "scripts/eda_original.py"], analysis_log, logger, "ORIGINAL EDA")
+    run_command([sys.executable, "scripts/analisis_eda.py"], analysis_original_log, logger, "FULL EDA")
     run_command([sys.executable, "scrapers/augment_dataset.py", "--target-total", str(args.target_total)], prep_log, logger, "SCRAPER")
     
     # Use combine_processed_csvs instead of merge
@@ -83,7 +84,7 @@ def main() -> int:
             f.unlink()
 
     run_command([sys.executable, "scripts/validate_dataset.py", "--target", str(args.target_total), "--input", "datasets/processed/processed_records.csv"], prep_log, logger, "VALIDATION")
-    run_command([sys.executable, "scripts/eda_features.py", "--input", "datasets/processed/processed_records.csv"], analysis_log, logger, "FEATURE EDA")
+    run_command([sys.executable, "scripts/eda_features.py", "--input", "datasets/processed/processed_records.csv"], analysis_features_log, logger, "FEATURE EDA")
 
     go_env = ["-csv", "datasets/processed/processed_records.csv", "-workers", str(args.workers), "-delay-ms", str(args.delay_ms), "-log-every", "5000"]
     run_go_command(["go", "run", "./cmd/pipeline", *go_env], go_log, logger, "PIPELINE")

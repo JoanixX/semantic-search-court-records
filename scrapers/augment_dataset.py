@@ -6,6 +6,10 @@ import sys
 import re
 from pathlib import Path
 from typing import Iterable
+
+if __package__ in {None, ""}:
+    sys.path.append(str(Path(__file__).resolve().parents[1]))
+
 from scrapers.base_utils import (
     TARGET_COLUMNS, HarvestedRow, HarvestSummary, DEFAULT_MAX_SHEETS_PER_WORKBOOK,
     DEFAULT_MAX_ROWS_PER_SHEET, MAX_TEXT_SCAN_CHARS, _normalize_token,
@@ -120,7 +124,7 @@ def main() -> int:
     parser.add_argument("--target-total", type=int, default=1_000_000, help="objetivo minimo de filas")
     parser.add_argument("--max-pages", type=int, default=1000, help="maximo de paginas a visitar")
     parser.add_argument("--timeout", type=int, default=20, help="timeout por request")
-    parser.add_argument("--log-file", default="evidence/prep.log", help="bitacora de preprocesamiento")
+    parser.add_argument("--log-file", default="evidence/scraper/prep.log", help="bitacora de preprocesamiento")
     parser.add_argument("--proxy", default="", help="proxy HTTP/HTTPS permitido por la red, por ejemplo http://host:puerto")
     parser.add_argument("--no-proxy-env", action="store_true", help="ignora variables HTTP_PROXY/HTTPS_PROXY del entorno")
     parser.add_argument("--max-sheets-per-workbook", type=int, default=DEFAULT_MAX_SHEETS_PER_WORKBOOK, help="maximo de hojas por XLSX/ODS")
@@ -183,7 +187,7 @@ def main() -> int:
     if discarded_sources:
         logger.info("Fuentes descartadas por rendimiento cero: %d", len(discarded_sources))
 
-    report_path = repo_root / "evidence" / "official_harvest_summary.txt"
+    report_path = repo_root / "evidence" / "scraper" / "official_harvest_summary.txt"
     warning_lines = [f"- {warning}" for warning in summary.warnings] if summary.warnings else ["- none"]
     report_path.write_text(
         "\n".join(
