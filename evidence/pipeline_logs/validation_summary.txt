@@ -1,0 +1,6 @@
+Validacion del dataset
+
+Archivo: datasets/processed/processed_records.csv
+Registros: 1141426
+Objetivo: 1000000
+Estado: cumple
