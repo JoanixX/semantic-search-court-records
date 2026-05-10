@@ -17,13 +17,14 @@ COLUMN_MAPPING = {
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(SCRIPT_DIR)
 PROCESSED_DIR = os.path.join(ROOT_DIR, 'datasets', 'processed')
+RAW_DIR = os.path.join(ROOT_DIR, 'datasets', 'raw')
 OUTPUT_FILE = os.path.join(PROCESSED_DIR, 'processed_records.csv')
 
 def combine_csvs():
-    csv_files = glob.glob(os.path.join(PROCESSED_DIR, '*.csv'))
-    csv_files = [f for f in csv_files if os.path.basename(f) != 'combined_processed_records.csv']
+    # Buscamos en la carpeta RAW todos los archivos base y el harvest del scraper
+    csv_files = glob.glob(os.path.join(RAW_DIR, '*.csv'))
     
-    print(f"Found {len(csv_files)} files to combine: {csv_files}")
+    print(f"Found {len(csv_files)} files to combine in {RAW_DIR}: {csv_files}")
     
     all_data = []
     
