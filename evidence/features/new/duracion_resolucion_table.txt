@@ -1,0 +1,7 @@
+Duracion de Resolucion (Buckets)
+
+Bucket (Dias) | Frecuencia
+--------------+-----------
+0-30          | 23395     
+31-365        | 670817    
+365+          | 426167    
