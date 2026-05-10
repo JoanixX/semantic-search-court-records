@@ -1,0 +1,5 @@
+Resumen de Feature Engineering (Trabajo Parcial)
+
+Archivo de entrada: datasets\processed\processed_records.csv
+Archivo de salida: datasets\processed\processed_records_features.csv
+Filas procesadas: 1141426
