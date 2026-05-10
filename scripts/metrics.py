@@ -63,7 +63,7 @@ def main():
     plt.xlabel('Número de Workers (Goroutines)')
     plt.ylabel('Speedup (X veces más rápido)')
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, 'speedup.png'))
+    plt.savefig(os.path.join(output_dir, 'curva_speedup.png'))
     print(f"G3 guardado en {output_dir}")
 
     # ==========================================

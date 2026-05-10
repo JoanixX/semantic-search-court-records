@@ -5,45 +5,91 @@ import logging
 import re
 import sys
 from collections import Counter
+from datetime import datetime
 from pathlib import Path
 
 if __package__ in {None, ""}:
     sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from scripts.common import EVIDENCE_DIR, GRAPHICS_DIR, ensure_dir, make_png_bar_chart, safe_bucket, setup_logger, write_kv_report, write_text_table
-
-DNI_RE = re.compile(r"\b\d{8}\b")
+from scripts.common import EVIDENCE_DIR, GRAPHICS_DIR, ensure_dir, make_png_bar_chart, setup_logger, write_kv_report, write_text_table
 
 def derive_features(row: dict[str, str]) -> dict[str, str]:
-    text = (row.get("RESUMEN_SENTENCIA") or row.get("TextoLegal") or row.get("TEXT") or "").strip()
-    words = text.split()
-    dni_count = len(DNI_RE.findall(text))
-    year = ""
-    date = (row.get("FEC_INGRESO") or "").strip()
-    if len(date) >= 4 and date[:4].isdigit():
-        year = date[:4]
+    # 1. TEXTO_PARA_EMBEDDING: Unificación Semántica
+    embedding_text = " ".join([
+        row.get("CDES_TIPOPROCESO", ""),
+        row.get("MATERIA", ""),
+        row.get("SUB_MATERIA", ""),
+        row.get("ESPECIFICA", ""),
+        row.get("RESUMEN_SENTENCIA", "")
+    ]).strip()
+
+    # 2. RIESGO_PII_NIVEL: Seguridad / Anonimización
+    demandante = row.get("TIPO_DEMANDANTE", "").upper().strip()
+    riesgo = 0
+    if "NATURAL" in demandante:
+        riesgo = 3
+    elif "JURIDICA" in demandante or "JURÍDICA" in demandante:
+        riesgo = 1
+    elif demandante and demandante != "--" and demandante != "N/A":
+        riesgo = 2 # Otras entidades (Estado, etc)
+
+    # 3. DURACION_RESOLUCION_DIAS: Eficiencia Procesal
+    duracion_dias = -1
+    fec_ingreso = row.get("FEC_INGRESO", "").strip()
+    pub_pagweb = row.get("PUB_PAGWEB", "").strip()
+    
+    # Soporta YYYY-MM-DD (len 10) y YYYYMMDD (len 8)
+    def parse_date(date_str):
+        if len(date_str) == 10 and date_str[4] == "-" and date_str[7] == "-":
+            return datetime.strptime(date_str, "%Y-%m-%d")
+        if len(date_str) == 8 and date_str.isdigit():
+            return datetime.strptime(date_str, "%Y%m%d")
+        return None
+
+    try:
+        d_ini = parse_date(fec_ingreso)
+        d_fin = parse_date(pub_pagweb)
+        if d_ini and d_fin:
+            diff = (d_fin - d_ini).days
+            if diff >= 0:
+                duracion_dias = diff
+    except Exception:
+        pass
+
+    # 4. NECESITA_HIDRATACION: Control de Pipeline (Scraper trigger)
+    # Se marca como 1 si falta el resumen o si la fecha de publicación es inválida/link
+    resumen = row.get("RESUMEN_SENTENCIA", "").strip()
+    hidratacion = 0
+    if not resumen or resumen == "--" or resumen == "N/A":
+        hidratacion = 1
+    elif "http" in pub_pagweb.lower() or ".pdf" in pub_pagweb.lower():
+        hidratacion = 1
+    elif pub_pagweb == "N/A" or pub_pagweb == "--":
+        hidratacion = 1
+
+    # 5. UBICACION_GEOCLUSTER: Agrupamiento Jurisdiccional
+    geocluster = f"{row.get('DEPARTAMENTO', 'N/A')} | {row.get('DISTRITO', 'N/A')}"
 
     enriched = dict(row)
-    enriched["feature_text_length"] = str(len(text))
-    enriched["feature_word_count"] = str(len(words))
-    enriched["feature_dni_count"] = str(dni_count)
-    enriched["feature_has_dni"] = "1" if dni_count > 0 else "0"
-    enriched["feature_year"] = year
+    enriched["TEXTO_PARA_EMBEDDING"] = embedding_text
+    enriched["RIESGO_PII_NIVEL"] = str(riesgo)
+    enriched["DURACION_RESOLUCION_DIAS"] = str(duracion_dias) if duracion_dias >= 0 else "N/A"
+    enriched["NECESITA_HIDRATACION"] = str(hidratacion)
+    enriched["UBICACION_GEOCLUSTER"] = geocluster
     return enriched
 
 def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> None:
-    ensure_dir(output_csv.parent)
-    ensure_dir(GRAPHICS_DIR / "features")
+    ensure_dir(GRAPHICS_DIR)
 
-    length_buckets = Counter()
-    word_buckets = Counter()
-    has_dni_counter = Counter()
-    year_counter = Counter()
+    riesgo_counter = Counter()
+    hidratacion_counter = Counter()
+    geocluster_counter = Counter()
+    duracion_buckets = Counter()
     total = 0
 
     with input_csv.open("r", encoding="utf-8", errors="ignore", newline="") as in_handle, output_csv.open("w", encoding="utf-8", newline="") as out_handle:
         reader = csv.DictReader(in_handle)
-        fieldnames = (reader.fieldnames or []) + ["feature_text_length", "feature_word_count", "feature_dni_count", "feature_has_dni", "feature_year"]
+        new_fields = ["TEXTO_PARA_EMBEDDING", "RIESGO_PII_NIVEL", "DURACION_RESOLUCION_DIAS", "NECESITA_HIDRATACION", "UBICACION_GEOCLUSTER"]
+        fieldnames = (reader.fieldnames or []) + new_fields
         writer = csv.DictWriter(out_handle, fieldnames=fieldnames)
         writer.writeheader()
 
@@ -52,78 +98,73 @@ def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> No
             enriched = derive_features(row)
             writer.writerow(enriched)
 
-            text = (row.get("RESUMEN_SENTENCIA") or row.get("TextoLegal") or row.get("TEXT") or "").strip()
-            length_buckets[safe_bucket(len(text), 100)] += 1
-            word_buckets[safe_bucket(len(text.split()), 25)] += 1
-            has_dni_counter[enriched["feature_has_dni"]] += 1
-            if enriched["feature_year"]:
-                year_counter[enriched["feature_year"]] += 1
+            riesgo_counter[enriched["RIESGO_PII_NIVEL"]] += 1
+            hidratacion_counter[enriched["NECESITA_HIDRATACION"]] += 1
+            geocluster_counter[enriched["UBICACION_GEOCLUSTER"]] += 1
+            
+            if enriched["DURACION_RESOLUCION_DIAS"] != "N/A":
+                dias = int(enriched["DURACION_RESOLUCION_DIAS"])
+                bucket = "0-30" if dias <= 30 else "31-365" if dias <= 365 else "365+"
+                duracion_buckets[bucket] += 1
 
             if total % 100000 == 0:
                 logger.info("Features procesadas: %d", total)
 
-    top_lengths = length_buckets.most_common(10)
-    top_words = word_buckets.most_common(10)
-    top_years = year_counter.most_common(10)
-    has_dni_rows = sorted(has_dni_counter.items())
-
+    top_geoclusters = geocluster_counter.most_common(10)
+    
     write_kv_report(
-        EVIDENCE_DIR / "feature_eda_summary.txt",
-        "Resumen de feature engineering",
+        GRAPHICS_DIR / "feature_eda_summary.txt",
+        "Resumen de Feature Engineering (Trabajo Parcial)",
         [
             ("Archivo de entrada", str(input_csv)),
             ("Archivo de salida", str(output_csv)),
             ("Filas procesadas", total),
-            ("Buckets de longitud", len(length_buckets)),
-            ("Buckets de palabras", len(word_buckets)),
         ],
     )
+    
     write_text_table(
-        EVIDENCE_DIR / "feature_length_table.txt",
-        "Buckets de longitud de texto",
-        ["Bucket", "Frecuencia"],
-        top_lengths,
+        GRAPHICS_DIR / "riesgo_pii_table.txt",
+        "Distribucion de Riesgo PII",
+        ["Nivel", "Frecuencia"],
+        sorted(riesgo_counter.items()),
     )
+    
     write_text_table(
-        EVIDENCE_DIR / "feature_word_table.txt",
-        "Buckets de palabras",
-        ["Bucket", "Frecuencia"],
-        top_words,
-    )
-    write_text_table(
-        EVIDENCE_DIR / "feature_has_dni_table.txt",
-        "Presencia de DNI",
-        ["Valor", "Frecuencia"],
-        has_dni_rows,
-    )
-    write_text_table(
-        EVIDENCE_DIR / "feature_year_table.txt",
-        "Top 10 anios en features",
-        ["Anio", "Frecuencia"],
-        top_years,
+        GRAPHICS_DIR / "duracion_resolucion_table.txt",
+        "Duracion de Resolucion (Buckets)",
+        ["Bucket (Dias)", "Frecuencia"],
+        sorted(duracion_buckets.items()),
     )
 
     make_png_bar_chart(
-        GRAPHICS_DIR / "features" / "text_length.png",
-        "Buckets de longitud",
-        [label for label, _ in top_lengths],
-        [value for _, value in top_lengths],
+        GRAPHICS_DIR / "riesgo_pii.png",
+        "Niveles de Riesgo PII",
+        [label for label, _ in sorted(riesgo_counter.items())],
+        [value for _, value in sorted(riesgo_counter.items())],
     )
+    
     make_png_bar_chart(
-        GRAPHICS_DIR / "features" / "word_count.png",
-        "Buckets de palabras",
-        [label for label, _ in top_words],
-        [value for _, value in top_words],
+        GRAPHICS_DIR / "geoclusters.png",
+        "Top 10 Ubicacion Geocluster",
+        [label for label, _ in top_geoclusters],
+        [value for _, value in top_geoclusters],
     )
+
     make_png_bar_chart(
-        GRAPHICS_DIR / "features" / "year.png",
-        "Top anios de features",
-        [label for label, _ in top_years],
-        [value for _, value in top_years],
+        GRAPHICS_DIR / "duracion_resolucion.png",
+        "Duracion de Resolucion (Dias)",
+        [label for label, _ in sorted(duracion_buckets.items())],
+        [value for _, value in sorted(duracion_buckets.items())],
+    )
+
+    make_png_bar_chart(
+        GRAPHICS_DIR / "necesita_hidratacion.png",
+        "Necesidad de Hidratacion (Trigger Scraper)",
+        ["No Necesita", "Necesita (1)"] if "1" in hidratacion_counter else [label for label, _ in sorted(hidratacion_counter.items())],
+        [value for _, value in sorted(hidratacion_counter.items())],
     )
 
     logger.info("Feature engineering completado: %d filas", total)
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="EDA de features sobre el dataset unificado")
@@ -131,9 +172,8 @@ def main() -> None:
     parser.add_argument("--output", default="datasets/processed/processed_records_features.csv", help="CSV enriquecido")
     args = parser.parse_args()
 
-    logger = setup_logger("features", EVIDENCE_DIR / "analysis.log")
+    logger = setup_logger("features", GRAPHICS_DIR / "analysis.log")
     feature_eda(Path(args.input), Path(args.output), logger)
-
 
 if __name__ == "__main__":
     main()
