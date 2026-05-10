@@ -126,9 +126,9 @@ def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> No
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="EDA de features sobre el dataset validado")
-    parser.add_argument("--input", default="datasets/processed/combined_official_dataset.csv", help="CSV combinado validado")
-    parser.add_argument("--output", default="datasets/processed/expedientes_tc_features.csv", help="CSV enriquecido")
+    parser = argparse.ArgumentParser(description="EDA de features sobre el dataset unificado")
+    parser.add_argument("--input", default="datasets/processed/processed_records.csv", help="CSV unificado")
+    parser.add_argument("--output", default="datasets/processed/processed_records_features.csv", help="CSV enriquecido")
     args = parser.parse_args()
 
     logger = setup_logger("features", EVIDENCE_DIR / "analysis.log")
