@@ -12,7 +12,8 @@ Separar ambos flujos evita mezclar carga real con carga de simulación y facilit
 Puede parecer que hay varios archivos `main`, pero en la práctica hay dos que se ejecutan:
 
 - Los de `cmd/` son los binarios válidos del proyecto.
-- Los de `notebooks/` quedaron como artefactos históricos y están excluidos del build con `//go:build ignore`.
+- Los de `cmd/demos/` (antes en notebooks/) son pruebas de rendimiento secuencial vs concurrente.
+- Los de `notebooks/` ahora solo contienen el análisis exploratorio (.ipynb).
 
 Esto se hace para conservar el material de exploración del informe sin romper `go test ./...`.
 
