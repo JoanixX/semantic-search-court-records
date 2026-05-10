@@ -67,12 +67,15 @@ func LoadCSVRecords(path string, limit int) ([]Record, error) {
 }
 
 func (p Processor) processRecord(record Record) string {
-	// Limpieza de fechas
-	_ = NormalizarFecha(record.FecIngreso)
-	_ = NormalizarFecha(record.PubPagWeb)
+	// Aplicamos la limpieza avanzada (imputación de nulos)
+	AdvancedCleaning(&record)
 
-	// Limpieza y anonimización de texto legal
-	return CleanAndAnonymize(record.TextoLegal, p.SimulatedCost)
+	// Simulamos costo de procesamiento si existe
+	if p.SimulatedCost > 0 {
+		time.Sleep(p.SimulatedCost)
+	}
+
+	return record.Especifica
 }
 
 // Sequential ejecuta el preprocesamiento con una sola goroutine.
@@ -250,13 +253,34 @@ func (p Processor) RunPipeline(inputPath, outputPath string) (Result, error) {
 		go func(id int) {
 			defer wgWorkers.Done()
 			for row := range jobs {
-				// Mapeo a Record y procesamiento
+				// Mapeo a Record y procesamiento avanzado
 				record, err := RecordFromCSVRow(row)
 				if err == nil {
-					// Aplicamos limpieza y anonimización
-					row[0] = NormalizarFecha(record.FecIngreso)
-					row[11] = NormalizarFecha(record.PubPagWeb)
-					row[10] = CleanAndAnonymize(record.TextoLegal, p.SimulatedCost)
+					// Aplicamos el motor de imputación inteligente
+					AdvancedCleaning(&record)
+
+					// Sincronizamos las 21 columnas del Record de vuelta a la fila del CSV
+					row[0] = record.FecIngreso
+					row[1] = record.Procedencia
+					row[2] = record.TipoProceso
+					row[3] = record.SalaOrigen
+					row[4] = record.TipoDemandante
+					row[5] = record.TipoDemandado
+					row[6] = record.Sala
+					row[7] = record.FecVista
+					row[8] = record.Materia
+					row[9] = record.SubMateria
+					row[10] = record.Especifica
+					row[11] = record.PubPagWeb
+					row[12] = record.PubPeruano
+					row[13] = record.TipoResolucion
+					row[14] = record.Fallo
+					row[15] = record.FecDevpj
+					row[16] = record.FecDevpj1
+					row[17] = record.Departamento
+					row[18] = record.Provincia
+					row[19] = record.Distrito
+					row[20] = record.ResumenSentencia
 				}
 
 				results <- row
