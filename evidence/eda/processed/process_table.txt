@@ -1,0 +1,14 @@
+Top 10 procesos
+
+Proceso                        | Frecuencia
+-------------------------------+-----------
+ACCION DE AMPARO               | 781077    
+HÁBEAS CORPUS                  | 196633    
+ACCION DE CUMPLIMIENTO         | 94241     
+QUEJA                          | 40384     
+HÁBEAS DATA                    | 21316     
+ACCION DE INCONSTITUCIONALIDAD | 6406      
+CONFLICTO DE COMPETENCIA       | 1361      
+HABEAS CORPUS                  | 4         
+PCM                            | 2         
+AMPARO                         | 1         

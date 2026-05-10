@@ -1,0 +1,70 @@
+=== RESUMEN PANDAS: processed_records.csv ===
+
+Shape: (1141426, 21)
+
+--- Dtypes ---
+FEC_INGRESO              str
+PROCEDENCIA              str
+CDES_TIPOPROCESO         str
+SALA_ORIGEN              str
+TIPO_DEMANDANTE          str
+TIPO_DEMANDADO           str
+SALA                     str
+FEC_VISTA                str
+MATERIA                  str
+SUB_MATERIA              str
+ESPECIFICA               str
+PUB_PAGWEB               str
+PUB_PERUANO              str
+TIPO_RESOLUCION          str
+FALLO                    str
+FEC_DEVPJ                str
+FEC_DEVPJ_1          float64
+DEPARTAMENTO             str
+PROVINCIA                str
+DISTRITO                 str
+RESUMEN_SENTENCIA        str
+
+--- Información General ---
+<class 'pandas.DataFrame'>
+RangeIndex: 1141426 entries, 0 to 1141425
+Data columns (total 21 columns):
+ #   Column             Non-Null Count    Dtype  
+---  ------             --------------    -----  
+ 0   FEC_INGRESO        1141426 non-null  str    
+ 1   PROCEDENCIA        1141424 non-null  str    
+ 2   CDES_TIPOPROCESO   1141426 non-null  str    
+ 3   SALA_ORIGEN        1122422 non-null  str    
+ 4   TIPO_DEMANDANTE    1141418 non-null  str    
+ 5   TIPO_DEMANDADO     1141404 non-null  str    
+ 6   SALA               1122422 non-null  str    
+ 7   FEC_VISTA          1141426 non-null  str    
+ 8   MATERIA            1141426 non-null  str    
+ 9   SUB_MATERIA        1035772 non-null  str    
+ 10  ESPECIFICA         957098 non-null   str    
+ 11  PUB_PAGWEB         1120475 non-null  str    
+ 12  PUB_PERUANO        905290 non-null   str    
+ 13  TIPO_RESOLUCION    524470 non-null   str    
+ 14  FALLO              525734 non-null   str    
+ 15  FEC_DEVPJ          1109208 non-null  str    
+ 16  FEC_DEVPJ_1        1141418 non-null  float64
+ 17  DEPARTAMENTO       1141424 non-null  str    
+ 18  PROVINCIA          1141418 non-null  str    
+ 19  DISTRITO           1141418 non-null  str    
+ 20  RESUMEN_SENTENCIA  999886 non-null   str    
+dtypes: float64(1), str(20)
+memory usage: 182.9 MB
+
+--- Estadísticas Descriptivas ---
+       FEC_INGRESO PROCEDENCIA  CDES_TIPOPROCESO SALA_ORIGEN TIPO_DEMANDANTE TIPO_DEMANDADO          SALA FEC_VISTA  MATERIA SUB_MATERIA ESPECIFICA  PUB_PAGWEB PUB_PERUANO TIPO_RESOLUCION   FALLO FEC_DEVPJ   FEC_DEVPJ_1 DEPARTAMENTO PROVINCIA DISTRITO                                                                                                                                                                                                                                                                                                                                                                                                                                   RESUMEN_SENTENCIA
+count      1141426     1141424           1141426     1122422         1141418        1141404       1122422   1141426  1141426     1035772     957098     1120475      905290          524470  525734   1109208  1.141418e+06      1141424   1141418  1141418                                                                                                                                                                                                                                                                                                                                                                                                                                              999886
+unique        6278          45                11       10813               3              3           320      5658       46          66         87        4853        2156               6      27      4064           NaN           28        44       44                                                                                                                                                                                                                                                                                                                                                                                                                                              999886
+top     2013-09-25        LIMA  ACCION DE AMPARO          --         NATURAL       JURIDICA  SALA PRIMERA        --       --          --         --  2020-09-30          --       Sentencia      --        --           NaN         LIMA      LIMA     LIMA  __SHEET__: dataset1_20250509 | __ROW__: 2 | FEC_INGRESO: 19920101 | FECINGRESO: 19920101 | PROCEDENCIA: LIMA | CDES_TIPOPROCESO: ACCION DE AMPARO | CDESTIPOPROCESO: ACCION DE AMPARO | TIPO_DEMANDANTE: NATURAL | TIPODEMANDANTE: NATURAL | TIPO_DEMANDADO: JURIDICA | TIPODEMANDADO: JURIDICA | PUB_PAGWEB: 20010911 | PUBPAGWEB: 20010911 | FEC_DEVPJ_1: 20250509 | FECDEVPJ1: 20250509 | DEPARTAMENTO: LIMA | PROVINCIA: LIMA | DISTRITO: LIMA
+freq          1880      480162            781077       79370         1082066        1132487        362313    359253   232388      307001     519103        4282      633576          217626  199747     68882           NaN       557587    480160   480160                                                                                                                                                                                                                                                                                                                                                                                                                                                   1
+mean           NaN         NaN               NaN         NaN             NaN            NaN           NaN       NaN      NaN         NaN        NaN         NaN         NaN             NaN     NaN       NaN  2.025526e+07          NaN       NaN      NaN                                                                                                                                                                                                                                                                                                                                                                                                                                                 NaN
+std            NaN         NaN               NaN         NaN             NaN            NaN           NaN       NaN      NaN         NaN        NaN         NaN         NaN             NaN     NaN       NaN  4.777036e+03          NaN       NaN      NaN                                                                                                                                                                                                                                                                                                                                                                                                                                                 NaN
+min            NaN         NaN               NaN         NaN             NaN            NaN           NaN       NaN      NaN         NaN        NaN         NaN         NaN             NaN     NaN       NaN  2.025051e+07          NaN       NaN      NaN                                                                                                                                                                                                                                                                                                                                                                                                                                                 NaN
+25%            NaN         NaN               NaN         NaN             NaN            NaN           NaN       NaN      NaN         NaN        NaN         NaN         NaN             NaN     NaN       NaN  2.025051e+07          NaN       NaN      NaN                                                                                                                                                                                                                                                                                                                                                                                                                                                 NaN
+50%            NaN         NaN               NaN         NaN             NaN            NaN           NaN       NaN      NaN         NaN        NaN         NaN         NaN             NaN     NaN       NaN  2.025101e+07          NaN       NaN      NaN                                                                                                                                                                                                                                                                                                                                                                                                                                                 NaN
+75%            NaN         NaN               NaN         NaN             NaN            NaN           NaN       NaN      NaN         NaN        NaN         NaN         NaN             NaN     NaN       NaN  2.026022e+07          NaN       NaN      NaN                                                                                                                                                                                                                                                                                                                                                                                                                                                 NaN
+max            NaN         NaN               NaN         NaN             NaN            NaN           NaN       NaN      NaN         NaN        NaN         NaN         NaN             NaN     NaN       NaN  2.026050e+07          NaN       NaN      NaN                                                                                                                                                                                                                                                                                                                                                                                                                                                 NaN

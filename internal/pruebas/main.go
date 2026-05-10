@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 )
 
 func ValidarConsistencia() {
 	fmt.Println("\n=== VALIDACIÓN DE CONSISTENCIA POST-PROCESAMIENTO ===")
-	
+
 	rutaOriginal := "../../datasets/processed/processed_records.csv"
 	// En un flujo real, compararíamos el original con el resultante.
 	// Aquí validamos que el archivo procesado tenga la cantidad esperada.
-	
+
 	count := 0
 	archivo, err := os.Open(rutaOriginal)
 	if err != nil {
@@ -48,6 +49,8 @@ func main() {
 	fmt.Println("****************************************************")
 	fmt.Println("*   SISTEMA DE PRUEBAS DE RENDIMIENTO Y MÉTRICAS   *")
 	fmt.Println("****************************************************")
+
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// 1. Ejecutar Concurrente Primero (como solicitó el usuario)
 	EjecutarPruebaConcurrente()

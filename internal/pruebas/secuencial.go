@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"runtime"
 	"semantic-search-court-records/internal/expedientes"
 	"time"
 )
@@ -13,61 +14,82 @@ import (
 func EjecutarPruebaSecuencial() {
 	rutaArchivoCSV := "../../datasets/processed/processed_records.csv"
 
-	fMetricas, err := os.Create("../../evidence/metrics_results/metricas_secuencial.csv")
+	fMetricas, err := os.Create(
+		"../../evidence/metrics_results/metricas_secuencial.csv",
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer fMetricas.Close()
-	fMetricas.WriteString("corrida,tiempo_segundos\n")
 
-	// Puntos de control solicitados: 10 y 25 corridas
-	puntosControl := []int{10, 25}
+	fMetricas.WriteString(
+		"corrida,tiempo_segundos,heap_mb,gc\n",
+	)
 
-	fmt.Println("=== INICIANDO PRUEBAS SECUENCIALES (PUNTOS DE CONTROL: 10, 25) ===")
+	totalCorridas := 10
+	fmt.Println("=== INICIANDO PRUEBAS SECUENCIALES ===")
 
-	actualCorrida := 1
-	for _, limite := range puntosControl {
-		fmt.Printf("--- Iniciando bloque hasta %d corridas ---\n", limite)
-		for actualCorrida <= limite {
-			archivo, err := os.Open(rutaArchivoCSV)
-			if err != nil {
-				log.Fatalf("Error: %v", err)
-			}
-
-			lectorCSV := csv.NewReader(archivo)
-			_, _ = lectorCSV.Read()
-
-			inicio := time.Now()
-			procesados := 0
-
-			for {
-				fila, err := lectorCSV.Read()
-				if err == io.EOF {
-					break
-				}
-				if err != nil {
-					continue
-				}
-
-				// Estandarización de fechas usando el módulo centralizado
-				fecIngreso := expedientes.NormalizarFecha(fila[0])
-				pubPagWeb := expedientes.NormalizarFecha(fila[11])
-
-				// Anonimización usando el módulo centralizado (delay simulado de 1ms)
-				especificaLimpia := expedientes.CleanAndAnonymize(fila[10], 1*time.Millisecond)
-
-				_ = fecIngreso
-				_ = pubPagWeb
-				_ = especificaLimpia
-
-				procesados++
-			}
-			archivo.Close()
-
-			tiempo := time.Since(inicio).Seconds()
-			fmt.Printf("Secuencial - Corrida %d: %.4f segundos\n", actualCorrida, tiempo)
-			fMetricas.WriteString(fmt.Sprintf("%d,%.4f\n", actualCorrida, tiempo))
-			actualCorrida++
+	for corrida := 1; corrida <= totalCorridas; corrida++ {
+		archivo, err := os.Open(rutaArchivoCSV)
+		if err != nil {
+			log.Fatalf("Error abriendo CSV: %v", err)
 		}
+
+		lectorCSV := csv.NewReader(archivo)
+		_, _ = lectorCSV.Read()
+
+		var memInicio runtime.MemStats
+		runtime.ReadMemStats(&memInicio)
+
+		inicio := time.Now()
+		procesados := 0
+
+		for {
+			fila, err := lectorCSV.Read()
+
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				continue
+			}
+			if len(fila) <= 11 {
+				continue
+			}
+			_ = expedientes.NormalizarFecha(fila[0])
+			_ = expedientes.NormalizarFecha(fila[11])
+			_ = expedientes.CleanAndAnonymize(
+				fila[10],
+				1*time.Nanosecond,
+			)
+			procesados++
+		}
+
+		archivo.Close()
+		tiempo := time.Since(inicio).Seconds()
+
+		var memFin runtime.MemStats
+		runtime.ReadMemStats(&memFin)
+
+		heapMB := float64(memFin.Alloc) / (1024 * 1024)
+
+		fmt.Printf(
+			"[SECUENCIAL] Corrida %d | Tiempo: %.4f s | Heap: %.2f MB | GC: %d | Registros: %d\n",
+			corrida,
+			tiempo,
+			heapMB,
+			memFin.NumGC,
+			procesados,
+		)
+
+		fMetricas.WriteString(
+			fmt.Sprintf(
+				"%d,%.4f,%.2f,%d\n",
+				corrida,
+				tiempo,
+				heapMB,
+				memFin.NumGC,
+			),
+		)
 	}
 }

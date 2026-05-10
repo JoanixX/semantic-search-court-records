@@ -78,7 +78,8 @@ def derive_features(row: dict[str, str]) -> dict[str, str]:
     return enriched
 
 def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> None:
-    ensure_dir(GRAPHICS_DIR)
+    output_dir = EVIDENCE_DIR / "features"
+    ensure_dir(output_dir)
 
     riesgo_counter = Counter()
     hidratacion_counter = Counter()
@@ -113,7 +114,7 @@ def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> No
     top_geoclusters = geocluster_counter.most_common(10)
     
     write_kv_report(
-        GRAPHICS_DIR / "feature_eda_summary.txt",
+        output_dir / "feature_eda_summary.txt",
         "Resumen de Feature Engineering (Trabajo Parcial)",
         [
             ("Archivo de entrada", str(input_csv)),
@@ -123,42 +124,42 @@ def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> No
     )
     
     write_text_table(
-        GRAPHICS_DIR / "riesgo_pii_table.txt",
+        output_dir / "riesgo_pii_table.txt",
         "Distribucion de Riesgo PII",
         ["Nivel", "Frecuencia"],
         sorted(riesgo_counter.items()),
     )
     
     write_text_table(
-        GRAPHICS_DIR / "duracion_resolucion_table.txt",
+        output_dir / "duracion_resolucion_table.txt",
         "Duracion de Resolucion (Buckets)",
         ["Bucket (Dias)", "Frecuencia"],
         sorted(duracion_buckets.items()),
     )
 
     make_png_bar_chart(
-        GRAPHICS_DIR / "riesgo_pii.png",
+        output_dir / "riesgo_pii.png",
         "Niveles de Riesgo PII",
         [label for label, _ in sorted(riesgo_counter.items())],
         [value for _, value in sorted(riesgo_counter.items())],
     )
     
     make_png_bar_chart(
-        GRAPHICS_DIR / "geoclusters.png",
+        output_dir / "geoclusters.png",
         "Top 10 Ubicacion Geocluster",
         [label for label, _ in top_geoclusters],
         [value for _, value in top_geoclusters],
     )
 
     make_png_bar_chart(
-        GRAPHICS_DIR / "duracion_resolucion.png",
+        output_dir / "duracion_resolucion.png",
         "Duracion de Resolucion (Dias)",
         [label for label, _ in sorted(duracion_buckets.items())],
         [value for _, value in sorted(duracion_buckets.items())],
     )
 
     make_png_bar_chart(
-        GRAPHICS_DIR / "necesita_hidratacion.png",
+        output_dir / "necesita_hidratacion.png",
         "Necesidad de Hidratacion (Trigger Scraper)",
         ["No Necesita", "Necesita (1)"] if "1" in hidratacion_counter else [label for label, _ in sorted(hidratacion_counter.items())],
         [value for _, value in sorted(hidratacion_counter.items())],
@@ -172,7 +173,10 @@ def main() -> None:
     parser.add_argument("--output", default="datasets/processed/processed_records_features.csv", help="CSV enriquecido")
     args = parser.parse_args()
 
-    logger = setup_logger("features", GRAPHICS_DIR / "analysis.log")
+    output_dir = EVIDENCE_DIR / "features"
+    ensure_dir(output_dir)
+    
+    logger = setup_logger("features", output_dir / "analysis.log")
     feature_eda(Path(args.input), Path(args.output), logger)
 
 if __name__ == "__main__":

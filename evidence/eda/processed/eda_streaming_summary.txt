@@ -1,0 +1,6 @@
+Resumen Streaming: processed_records.csv
+
+Archivo: datasets\processed\processed_records.csv
+Filas: 1141426
+Columnas: 21
+Columnas con nulos detectados: 19

@@ -70,7 +70,7 @@ func (p Processor) processRecord(record Record) string {
 	// Limpieza de fechas
 	_ = NormalizarFecha(record.FecIngreso)
 	_ = NormalizarFecha(record.PubPagWeb)
-	
+
 	// Limpieza y anonimización de texto legal
 	return CleanAndAnonymize(record.TextoLegal, p.SimulatedCost)
 }
@@ -258,7 +258,7 @@ func (p Processor) RunPipeline(inputPath, outputPath string) (Result, error) {
 					row[11] = NormalizarFecha(record.PubPagWeb)
 					row[10] = CleanAndAnonymize(record.TextoLegal, p.SimulatedCost)
 				}
-				
+
 				results <- row
 				total := atomic.AddInt64(&processed, 1)
 				if p.LogEvery > 0 && total%int64(p.LogEvery) == 0 {

@@ -1,0 +1,70 @@
+=== RESUMEN PANDAS: dataset.csv ===
+
+Shape: (149387, 21)
+
+--- Dtypes ---
+FEC_INGRESO            int64
+PROCEDENCIA              str
+CDES_TIPOPROCESO         str
+SALA_ORIGEN              str
+TIPO_DEMANDANTE          str
+TIPO_DEMANDADO           str
+SALA                     str
+FEC_VISTA                str
+MATERIA                  str
+SUB_MATERIA              str
+ESPECIFICA               str
+RESUMEN_SENTENCIA    float64
+PUB_PAGWEB             int64
+PUB_PERUANO              str
+TIPO_RESOLUCION          str
+FALLO                    str
+FEC_DEVPJ                str
+FEC_DEVPJ_1            int64
+DEPARTAMENTO             str
+PROVINCIA                str
+DISTRITO                 str
+
+--- Información General ---
+<class 'pandas.DataFrame'>
+RangeIndex: 149387 entries, 0 to 149386
+Data columns (total 21 columns):
+ #   Column             Non-Null Count   Dtype  
+---  ------             --------------   -----  
+ 0   FEC_INGRESO        149387 non-null  int64  
+ 1   PROCEDENCIA        149387 non-null  str    
+ 2   CDES_TIPOPROCESO   149387 non-null  str    
+ 3   SALA_ORIGEN        149387 non-null  str    
+ 4   TIPO_DEMANDANTE    149387 non-null  str    
+ 5   TIPO_DEMANDADO     149387 non-null  str    
+ 6   SALA               149387 non-null  str    
+ 7   FEC_VISTA          149387 non-null  str    
+ 8   MATERIA            149387 non-null  str    
+ 9   SUB_MATERIA        149387 non-null  str    
+ 10  ESPECIFICA         149387 non-null  str    
+ 11  RESUMEN_SENTENCIA  0 non-null       float64
+ 12  PUB_PAGWEB         149387 non-null  int64  
+ 13  PUB_PERUANO        149387 non-null  str    
+ 14  TIPO_RESOLUCION    149387 non-null  str    
+ 15  FALLO              149387 non-null  str    
+ 16  FEC_DEVPJ          149387 non-null  str    
+ 17  FEC_DEVPJ_1        149387 non-null  int64  
+ 18  DEPARTAMENTO       149387 non-null  str    
+ 19  PROVINCIA          149387 non-null  str    
+ 20  DISTRITO           149387 non-null  str    
+dtypes: float64(1), int64(3), str(17)
+memory usage: 23.9 MB
+
+--- Estadísticas Descriptivas ---
+         FEC_INGRESO PROCEDENCIA  CDES_TIPOPROCESO SALA_ORIGEN TIPO_DEMANDANTE TIPO_DEMANDADO          SALA FEC_VISTA MATERIA SUB_MATERIA ESPECIFICA  RESUMEN_SENTENCIA    PUB_PAGWEB PUB_PERUANO TIPO_RESOLUCION   FALLO FEC_DEVPJ  FEC_DEVPJ_1 DEPARTAMENTO PROVINCIA DISTRITO
+count   1.493870e+05      149387            149387      149387          149387         149387        149387    149387  149387      149387     149387                0.0  1.493870e+05      149387          149387  149387    149387     149387.0       149387    149387   149387
+unique           NaN          43                 7        9600               2              3             5      1140      35          66         87                NaN           NaN        2156               4      24      4061          NaN           26        43       43
+top              NaN        LIMA  ACCION DE AMPARO          --         NATURAL       JURIDICA  SALA PRIMERA        --      --          --         --                NaN           NaN          --       Sentencia      --        --          NaN         LIMA      LIMA     LIMA
+freq             NaN       62462            101309       13666          141604         148191         63778     66184   39490       52719      91596                NaN           NaN      110237           62330   50770     10395          NaN        72770     62462    62462
+mean    2.011839e+07         NaN               NaN         NaN             NaN            NaN           NaN       NaN     NaN         NaN        NaN                NaN  2.012863e+07         NaN             NaN     NaN       NaN   20260409.0          NaN       NaN      NaN
+std     7.018548e+04         NaN               NaN         NaN             NaN            NaN           NaN       NaN     NaN         NaN        NaN                NaN  7.193411e+04         NaN             NaN     NaN       NaN          0.0          NaN       NaN      NaN
+min     1.992010e+07         NaN               NaN         NaN             NaN            NaN           NaN       NaN     NaN         NaN        NaN                NaN  1.996083e+07         NaN             NaN     NaN       NaN   20260409.0          NaN       NaN      NaN
+25%     2.006063e+07         NaN               NaN         NaN             NaN            NaN           NaN       NaN     NaN         NaN        NaN                NaN  2.007052e+07         NaN             NaN     NaN       NaN   20260409.0          NaN       NaN      NaN
+50%     2.012031e+07         NaN               NaN         NaN             NaN            NaN           NaN       NaN     NaN         NaN        NaN                NaN  2.012093e+07         NaN             NaN     NaN       NaN   20260409.0          NaN       NaN      NaN
+75%     2.017082e+07         NaN               NaN         NaN             NaN            NaN           NaN       NaN     NaN         NaN        NaN                NaN  2.019042e+07         NaN             NaN     NaN       NaN   20260409.0          NaN       NaN      NaN
+max     2.025122e+07         NaN               NaN         NaN             NaN            NaN           NaN       NaN     NaN         NaN        NaN                NaN  2.026040e+07         NaN             NaN     NaN       NaN   20260409.0          NaN       NaN      NaN
