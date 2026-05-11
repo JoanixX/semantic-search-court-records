@@ -1,0 +1,62 @@
+never exclusion_mutua {    /* !([] (! ((in_critical) && ((mutex==0))))) */
+T0_init:
+	do
+	:: atomic { (! ((! ((in_critical) && ((mutex==0)))))) -> assert(!(! ((! ((in_critical) && ((mutex==0))))))) }
+	:: (1) -> goto T0_init
+	od;
+accept_all:
+	skip
+}
+never progreso {    /* !([] ((! ((produced>consumed))) || (<> ((consumed==produced))))) */
+T0_init:
+	do
+	:: (! ((! ((produced>consumed)))) && ! (((consumed==produced)))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! (((consumed==produced)))) -> goto accept_S4
+	od;
+}
+never anti_starvation_worker0 {    /* !([] ((! (worker_active[0])) || (<> ((worker_jobs[0]>0))))) */
+T0_init:
+	do
+	:: (! ((! (worker_active[0]))) && ! (((worker_jobs[0]>0)))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! (((worker_jobs[0]>0)))) -> goto accept_S4
+	od;
+}
+never anti_starvation_worker1 {    /* !([] ((! (worker_active[1])) || (<> ((worker_jobs[1]>0))))) */
+T0_init:
+	do
+	:: (! ((! (worker_active[1]))) && ! (((worker_jobs[1]>0)))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! (((worker_jobs[1]>0)))) -> goto accept_S4
+	od;
+}
+never anti_starvation_worker2 {    /* !([] ((! (worker_active[2])) || (<> ((worker_jobs[2]>0))))) */
+T0_init:
+	do
+	:: (! ((! (worker_active[2]))) && ! (((worker_jobs[2]>0)))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! (((worker_jobs[2]>0)))) -> goto accept_S4
+	od;
+}
+never buffer_seguro {    /* !([] (((buffer_count>=0)) && ((buffer_count<=5)))) */
+T0_init:
+	do
+	:: atomic { (! ((((buffer_count>=0)) && ((buffer_count<=5))))) -> assert(!(! ((((buffer_count>=0)) && ((buffer_count<=5)))))) }
+	:: (1) -> goto T0_init
+	od;
+accept_all:
+	skip
+}
