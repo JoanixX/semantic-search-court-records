@@ -2,6 +2,5 @@ Distribucion de Riesgo PII
 
 Nivel | Frecuencia
 ------+-----------
-0     | 40        
 1     | 59320     
-3     | 1082066   
+3     | 1082106   
