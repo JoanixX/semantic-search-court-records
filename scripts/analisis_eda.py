@@ -251,37 +251,49 @@ def run_pandas_eda(csv_path: Path, output_dir: Path, logger: logging.Logger) -> 
             plt.close()
 
 def main():
-    # Rutas de entrada
+    parser = argparse.ArgumentParser(description="Análisis Exploratorio de Datos (EDA) para registros judiciales")
+    parser.add_argument("--input", help="Ruta al archivo CSV a analizar")
+    parser.add_argument("--output-dir", help="Directorio donde se guardarán los resultados")
+    args = parser.parse_args()
+
+    # Si se pasan argumentos, ejecutar para ese archivo específico
+    if args.input and args.output_dir:
+        input_path = Path(args.input)
+        output_dir = Path(args.output_dir)
+        logger = setup_logger(f"eda-{input_path.stem}", output_dir / "analysis.log")
+        
+        if input_path.exists():
+            print(f"Iniciando EDA para: {input_path}")
+            run_streaming_eda(input_path, output_dir, logger)
+            run_pandas_eda(input_path, output_dir, logger)
+        else:
+            print(f"Error: No se encontró el archivo {input_path}")
+            sys.exit(1)
+        return
+
+    # Comportamiento por defecto (ejecutar ambos si no hay argumentos)
     original_data_path = Path("datasets/raw/dataset.csv")
     processed_data_path = Path("datasets/processed/processed_records.csv")
 
-    # Rutas de salida (Nuevas rutas solicitadas)
     eda_original_dir = EVIDENCE_DIR / "eda" / "original"
     eda_processed_dir = EVIDENCE_DIR / "eda" / "processed"
     
-    # Loggers
-    logger_orig = setup_logger("eda-original", eda_original_dir / "analysis.log")
-    logger_proc = setup_logger("eda-processed", eda_processed_dir / "analysis.log")
-
     # --- Análisis Dataset Original ---
     if original_data_path.exists():
+        logger_orig = setup_logger("eda-original", eda_original_dir / "analysis.log")
         print(f"Iniciando EDA Original: {original_data_path}")
         run_streaming_eda(original_data_path, eda_original_dir, logger_orig)
         run_pandas_eda(original_data_path, eda_original_dir, logger_orig)
-    else:
-        print(f"Saltando EDA Original (No encontrado en {original_data_path})")
 
     # --- Análisis Dataset Procesado ---
     if processed_data_path.exists():
+        logger_proc = setup_logger("eda-processed", eda_processed_dir / "analysis.log")
         print(f"Iniciando EDA Procesado: {processed_data_path}")
         run_streaming_eda(processed_data_path, eda_processed_dir, logger_proc)
         run_pandas_eda(processed_data_path, eda_processed_dir, logger_proc)
-    else:
-        print(f"Saltando EDA Procesado (No encontrado en {processed_data_path})")
 
     print(f"\nProceso completado.")
-    print(f"Resultados Original: {eda_original_dir}")
-    print(f"Resultados Procesado: {eda_processed_dir}")
 
 if __name__ == "__main__":
+    import argparse
     main()
