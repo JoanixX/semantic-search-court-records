@@ -1,28 +1,28 @@
 # Arquitectura Y Justificación
 
-El proyecto usa dos entrypoints Go reales porque resuelven necesidades distintas:
+El proyecto está diseñado bajo un enfoque modular, separando la lógica de negocio (procesamiento de expedientes) de la infraestructura de ejecución y las pruebas de rendimiento.
 
-- `cmd/pipeline/main.go`: procesa el dataset real con limpieza y anonimización.
-- `cmd/benchmark/main.go`: ejecuta el escenario controlado para medir secuencial vs concurrente.
+## Estructura de Módulos
 
-Separar ambos flujos evita mezclar carga real con carga de simulación y facilita justificar el speedup en el informe.
+- **`internal/pipeline/`**: Entrypoint principal del sistema. Orquesta la lectura de datasets masivos y aplica el pipeline de limpieza mediante concurrencia.
+- **`internal/pruebas/`**: Módulo dedicado a la validación de algoritmos y benchmarking controlado (Secuencial vs Concurrente).
+- **`internal/expedientes/`**: Contiene la lógica nuclear (Limpiador, Validador, Tipos) compartida por los entrypoints.
 
-## Sobre Los `main.go`
+## Orquestación del Flujo
 
-Puede parecer que hay varios archivos `main`, pero en la práctica hay dos que se ejecutan:
+El sistema utiliza un orquestador en Python (`scripts/run_workflow.py`) que garantiza un flujo de 10 pasos lógicos, desde la ingesta de datos hasta la generación de características enriquecidas (Feature Engineering). Esto asegura que cada fase tenga las dependencias de datos necesarias antes de ejecutarse.
 
-- Los de `cmd/` son los binarios válidos del proyecto.
-- Los de `cmd/demos/` (antes en notebooks/) son pruebas de rendimiento secuencial vs concurrente.
-- Los de `notebooks/` ahora solo contienen el análisis exploratorio (.ipynb).
+## Modelo de Concurrencia
 
-Esto se hace para conservar el material de exploración del informe sin romper `go test ./...`.
+El pipeline utiliza el patrón **Producer-Worker-Consumer**:
 
-## Concurrencia
+- **Productor**: Lee el archivo CSV y distribuye los registros en un canal con buffer (`chunkSize`).
+- **Workers**: Pool de goroutines que procesan y anonimizan registros en paralelo.
+- **Consumidor**: Recibe los resultados y escribe el archivo final de forma sincronizada.
 
-El pipeline usa:
-
-- `channels` para distribuir trabajo.
-- `sync.WaitGroup` para coordinar finalización.
-- `sync/atomic` para el contador global.
-- una sección crítica mínima para evitar contención innecesaria.
+Tecnologías de coordinación:
+- `channels` para la distribución de carga y gestión de presión (backpressure).
+- `sync.WaitGroup` para la sincronización de fin de etapa.
+- `sync/atomic` para contadores de progreso globales sin bloqueos.
+- `context` (opcional) para la propagación de cancelaciones en ejecuciones largas.
 

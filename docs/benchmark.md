@@ -1,36 +1,37 @@
 # Benchmark Secuencial Vs Concurrente
 
-## Qué hace
+## Propósito
 
-El benchmark de `cmd/benchmark/main.go` genera datos sintéticos y compara varias corridas del modelo secuencial y concurrente.
+El benchmark reside en `internal/pruebas/` y tiene como objetivo comparar el desempeño del algoritmo de procesamiento bajo una carga controlada. Se utiliza para validar empíricamente la Ley de Amdahl y el Speedup teórico del sistema.
 
 ## Cómo ejecutar
 
 ```bash
-go run ./cmd/benchmark -records 20000 -runs 3 -delay-ms 2
+go run ./internal/pruebas -records 20000 -runs 5
 ```
 
-## Parámetros
+## Parámetros de Configuración
 
-- `-records`: cantidad de registros sintéticos.
-- `-runs`: número de repeticiones.
-- `-delay-ms`: costo simulado por registro.
+- `-records`: Cantidad de registros sintéticos a generar para la prueba.
+- `-runs`: Número de iteraciones para obtener una media estadística fiable.
+- `-workers`: Número de hilos concurrentes (por defecto detecta CPUs lógicas).
 
-## Qué reporta
+## Métricas Reportadas
 
-- media recortada para secuencial.
-- media recortada para concurrente.
-- speedup final.
+1. **Media Recortada (Secuencial/Concurrente)**: Elimina valores atípicos para mayor precisión.
+2. **Speedup**: Factor de aceleración (Tiempo Secuencial / Tiempo Concurrente).
+3. **Eficiencia**: Speedup normalizado por el número de workers.
+4. **Ley de Amdahl**: Proyección del límite teórico de mejora.
 
-## Resultado PC2 reportado
+## Referencia Histórica (Hito PC2)
 
-Segun el informe `CC65-PC2-202601-U202312801.pdf`, el resultado principal de PC2 fue:
+Resultados obtenidos en un entorno controlado de 8 cores:
 
-| Metrica | Resultado |
+| Métrica | Resultado |
 |---|---:|
 | Registros | 20,000 |
 | Workers | 8 |
-| Tiempo secuencial | 50.4404 s |
-| Tiempo concurrente | 6.2687 s |
-| Speedup | 8.05x |
-| Reduccion de tiempo | 87.57% |
+| Tiempo Secuencial | 50.4404 s |
+| Tiempo Concurrente | 6.2687 s |
+| **Speedup** | **8.05x** |
+| **Reducción de Tiempo** | **87.57%** |
