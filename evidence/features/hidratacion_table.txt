@@ -1,5 +1,0 @@
-Distribucion de Necesidad de Hidratacion
-
-Nivel | Frecuencia
-------+-----------
-0     | 1141426   
