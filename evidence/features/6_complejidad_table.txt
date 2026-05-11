@@ -1,0 +1,8 @@
+Distribucion de Complejidad de Caso
+
+Nivel (1-5) | Frecuencia
+------------+-----------
+1           | 132329    
+2           | 848710    
+3           | 26373     
+4           | 134014    

@@ -46,3 +46,51 @@
 [features] 2026-05-10 21:16:01,395 INFO Features procesadas: 1000000
 [features] 2026-05-10 21:16:10,606 INFO Features procesadas: 1100000
 [features] 2026-05-10 21:16:15,344 INFO Feature engineering completado: 1141426 filas
+[features] 2026-05-11 03:58:48,125 INFO Features procesadas: 100000
+[features] 2026-05-11 03:58:55,719 INFO Features procesadas: 200000
+[features] 2026-05-11 03:59:05,385 INFO Features procesadas: 300000
+[features] 2026-05-11 03:59:15,480 INFO Features procesadas: 400000
+[features] 2026-05-11 03:59:26,163 INFO Features procesadas: 500000
+[features] 2026-05-11 03:59:36,485 INFO Features procesadas: 600000
+[features] 2026-05-11 03:59:46,279 INFO Features procesadas: 700000
+[features] 2026-05-11 03:59:57,642 INFO Features procesadas: 800000
+[features] 2026-05-11 04:00:08,829 INFO Features procesadas: 900000
+[features] 2026-05-11 04:00:20,585 INFO Features procesadas: 1000000
+[features] 2026-05-11 04:00:33,192 INFO Features procesadas: 1100000
+[features] 2026-05-11 04:00:38,290 INFO Feature engineering completado: 1141426 filas
+[features] 2026-05-11 04:07:48,156 INFO Features procesadas: 100000
+[features] 2026-05-11 04:07:55,635 INFO Features procesadas: 200000
+[features] 2026-05-11 04:08:05,771 INFO Features procesadas: 300000
+[features] 2026-05-11 04:08:17,616 INFO Features procesadas: 400000
+[features] 2026-05-11 04:08:29,082 INFO Features procesadas: 500000
+[features] 2026-05-11 04:08:40,205 INFO Features procesadas: 600000
+[features] 2026-05-11 04:08:50,838 INFO Features procesadas: 700000
+[features] 2026-05-11 04:09:02,588 INFO Features procesadas: 800000
+[features] 2026-05-11 04:09:14,631 INFO Features procesadas: 900000
+[features] 2026-05-11 04:09:25,680 INFO Features procesadas: 1000000
+[features] 2026-05-11 04:09:37,994 INFO Features procesadas: 1100000
+[features] 2026-05-11 04:09:42,439 INFO Feature engineering completado: 1141426 filas
+[features] 2026-05-11 04:15:08,371 INFO Features procesadas: 100000
+[features] 2026-05-11 04:15:16,902 INFO Features procesadas: 200000
+[features] 2026-05-11 04:15:27,600 INFO Features procesadas: 300000
+[features] 2026-05-11 04:15:39,660 INFO Features procesadas: 400000
+[features] 2026-05-11 04:15:51,625 INFO Features procesadas: 500000
+[features] 2026-05-11 04:16:02,916 INFO Features procesadas: 600000
+[features] 2026-05-11 04:16:12,492 INFO Features procesadas: 700000
+[features] 2026-05-11 04:16:24,079 INFO Features procesadas: 800000
+[features] 2026-05-11 04:16:36,443 INFO Features procesadas: 900000
+[features] 2026-05-11 04:16:48,802 INFO Features procesadas: 1000000
+[features] 2026-05-11 04:17:14,009 INFO Features procesadas: 1100000
+[features] 2026-05-11 04:17:24,590 INFO Feature engineering completado: 1141426 filas
+[features] 2026-05-11 04:26:49,227 INFO Features procesadas: 100000
+[features] 2026-05-11 04:26:59,912 INFO Features procesadas: 200000
+[features] 2026-05-11 04:27:12,766 INFO Features procesadas: 300000
+[features] 2026-05-11 04:27:25,411 INFO Features procesadas: 400000
+[features] 2026-05-11 04:27:37,616 INFO Features procesadas: 500000
+[features] 2026-05-11 04:27:49,088 INFO Features procesadas: 600000
+[features] 2026-05-11 04:28:00,324 INFO Features procesadas: 700000
+[features] 2026-05-11 04:28:10,950 INFO Features procesadas: 800000
+[features] 2026-05-11 04:28:24,966 INFO Features procesadas: 900000
+[features] 2026-05-11 04:28:36,299 INFO Features procesadas: 1000000
+[features] 2026-05-11 04:28:48,448 INFO Features procesadas: 1100000
+[features] 2026-05-11 04:28:53,003 INFO Feature engineering completado: 1141426 filas

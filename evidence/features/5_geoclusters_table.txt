@@ -1,0 +1,19 @@
+Distribucion de Geocluster (Top 15)
+
+Localidad                 | Frecuencia
+--------------------------+-----------
+LIMA | LIMA               | 480191    
+LAMBAYEQUE | LAMBAYEQUE   | 69674     
+JUNIN | JUNIN             | 60746     
+AREQUIPA | AREQUIPA       | 56866     
+LA LIBERTAD | LA LIBERTAD | 46012     
+ICA | ICA                 | 43609     
+ANCASH | SANTA            | 37683     
+PIURA | PIURA             | 35641     
+CUSCO | CUSCO             | 31681     
+AYACUCHO | AYACUCHO       | 24246     
+LIMA | HUAURA             | 24103     
+HUANUCO | HUANUCO         | 22607     
+TACNA | TACNA             | 18378     
+UCAYALI | UCAYALI         | 17433     
+PUNO | PUNO               | 17400     

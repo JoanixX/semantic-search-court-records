@@ -1,0 +1,7 @@
+Distribucion de Texto para Embedding (Status)
+
+Status              | Frecuencia
+--------------------+-----------
+1. Corto (<100)     | 26675     
+2. Medio (100-1000) | 277257    
+3. Largo (>1000)    | 837494    

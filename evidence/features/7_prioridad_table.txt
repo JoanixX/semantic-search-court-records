@@ -1,0 +1,7 @@
+Distribucion de Prioridad de Atencion
+
+Prioridad | Frecuencia
+----------+-----------
+ALTA      | 129352    
+BAJA      | 713968    
+MEDIA     | 298106    

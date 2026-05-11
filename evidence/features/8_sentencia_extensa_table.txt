@@ -1,0 +1,7 @@
+Distribucion de Sentencias Extensas
+
+Tipo           | Frecuencia
+---------------+-----------
+0. Normal      | 158702    
+1. Extensa     | 982724    
+2. Muy Extensa | 0         
