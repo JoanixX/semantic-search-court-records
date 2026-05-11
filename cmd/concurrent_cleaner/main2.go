@@ -1,6 +1,8 @@
 package main
+
 import (
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -9,8 +11,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-	"flag"
 )
+
 type ExpedienteTC struct {
 	TextoLegal string
 }
@@ -66,15 +68,16 @@ func ejecutarCorrida(numWorkers int, rutaArchivo string) float64 {
 
 func main() {
 	inputPath := flag.String("csv", "../../datasets/processed/processed_records.csv", "Ruta al archivo CSV")
-	outputPath := flag.String("output", "metricas_concurrente.csv", "Ruta de salida para el CSV de métricas")
+	// Cambiamos el nombre del archivo de salida para diferenciarlo
+	outputPath := flag.String("output", "metricas_concurrente_exponencial.csv", "Ruta de salida para el CSV de métricas exponenciales")
 	corridas := flag.Int("runs", 100, "Corridas por cada nivel de workers")
+	// El máximo ahora por defecto es 128
 	maxWorkers := flag.Int("max-workers", 128, "Cantidad máxima de workers para el test")
-	stepWorkers := flag.Int("step", 15, "Incremento de workers por cada corrida")
 	flag.Parse()
 
 	// Validación
 	if *inputPath == "" {
-		log.Fatal("Error: La flag -input es obligatoria. Proporciona la ruta del dataset.")
+		log.Fatal("Error: La flag -csv es obligatoria. Proporciona la ruta del dataset.")
 	}
 
 	fMetricas, err := os.Create(*outputPath)
@@ -85,10 +88,11 @@ func main() {
 
 	// Identificamos los workers y la corrida específica en el mismo CSV
 	fMetricas.WriteString("workers,corrida,tiempo_segundos\n")
-	fmt.Printf("=== BENCHMARK CONCURRENTE (%d corridas por escalón) ===\n", *corridas)
+	fmt.Printf("=== BENCHMARK CONCURRENTE EXPONENCIAL (%d corridas por escalón) ===\n", *corridas)
 
-	for workers := *stepWorkers; workers <= *maxWorkers; workers += *stepWorkers {
-		fmt.Printf("\n--- Evaluando con %d Workers ---\n", workers)
+	// Bucle modificado: Inicia en 1 y se multiplica por 2 en cada iteración
+	for workers := 1; workers <= *maxWorkers; workers *= 2 {
+		fmt.Printf("\n--- Evaluando con %3d Workers ---\n", workers)
 		
 		for i := 1; i <= *corridas; i++ {
 			tiempo := ejecutarCorrida(workers, *inputPath)
@@ -96,5 +100,5 @@ func main() {
 			fMetricas.WriteString(fmt.Sprintf("%d,%d,%.4f\n", workers, i, tiempo))
 		}
 	}
-	fmt.Println("\nResultados concurrentes guardados con éxito.")
+	fmt.Println("\nResultados concurrentes exponenciales guardados con éxito.")
 }
