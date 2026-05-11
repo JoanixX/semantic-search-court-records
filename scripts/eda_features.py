@@ -67,15 +67,13 @@ def derive_features(row: dict[str, str]) -> dict[str, str]:
     hidratacion = 0
     if not resumen or resumen in {"--", "N/A", "null", "SIN RESUMEN", "NO ESPECIFICA"}:
         hidratacion = 1
-    elif len(resumen) < 100: # Umbral de calidad
+    elif len(resumen) < 50: # Umbral de calidad
         hidratacion = 1
     elif "http" in pub_pagweb.lower() or ".pdf" in pub_pagweb.lower():
         hidratacion = 1
 
     # 5. UBICACION_GEOCLUSTER: Agrupamiento Jurisdiccional
     geocluster = f"{row.get('DEPARTAMENTO', 'N/A')} | {row.get('DISTRITO', 'N/A')}"
-
-    # --- NUEVAS FEATURES ---
     
     # 6. COMPLEJIDAD_CASO: Basado en materia y longitud de sentencia
     longitud = len(resumen)
@@ -94,8 +92,9 @@ def derive_features(row: dict[str, str]) -> dict[str, str]:
     elif duracion_dias > 365: # Mas de 1 año
         prioridad = "MEDIA"
 
-    # 8. SENTENCIA_EXTENSA: Flag booleano
-    extensa = "1" if longitud > 1500 else "0"
+    # 8. SENTENCIA_EXTENSA: Flag booleano (Umbral ajustado a 500 para mejor variabilidad)
+    extensa = "1" if longitud > 500 else "0"
+    extensa = "2" if longitud > 2000 else extensa
 
     enriched = dict(row)
     enriched["TEXTO_PARA_EMBEDDING"] = embedding_text
@@ -118,6 +117,8 @@ def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> No
     duracion_buckets = Counter()
     complejidad_counter = Counter()
     prioridad_counter = Counter()
+    embedding_counter = Counter()
+    extensa_counter = Counter()
     total = 0
 
     with input_csv.open("r", encoding="utf-8", errors="ignore", newline="") as in_handle, output_csv.open("w", encoding="utf-8", newline="") as out_handle:
@@ -142,13 +143,36 @@ def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> No
             complejidad_counter[enriched["COMPLEJIDAD_CASO"]] += 1
             prioridad_counter[enriched["PRIORIDAD_ATENCION"]] += 1
             
+            # 1. TEXTO_PARA_EMBEDDING (Status por longitud)
+            emb_len = len(enriched["TEXTO_PARA_EMBEDDING"])
+            if emb_len == 0: emb_status = "0. Vacio"
+            elif emb_len < 100: emb_status = "1. Corto (<100)"
+            elif emb_len < 1000: emb_status = "2. Medio (100-1000)"
+            else: emb_status = "3. Largo (>1000)"
+            embedding_counter[emb_status] += 1
+
+            # 3. DURACION_RESOLUCION_DIAS (Buckets)
             if enriched["DURACION_RESOLUCION_DIAS"] != "N/A":
                 dias = int(enriched["DURACION_RESOLUCION_DIAS"])
                 bucket = "0-30" if dias <= 30 else "31-365" if dias <= 365 else "365+"
                 duracion_buckets[bucket] += 1
+            else:
+                duracion_buckets["N/A"] += 1
+
+            # 8. SENTENCIA_EXTENSA (0: Normal, 1: Extensa, 2: Muy Extensa)
+            val_ext = enriched["SENTENCIA_EXTENSA"]
+            ext_label = "0. Normal" if val_ext == "0" else "1. Extensa" if val_ext == "1" else "2. Muy Extensa"
+            extensa_counter[ext_label] += 1
 
             if total % 100000 == 0:
                 logger.info("Features procesadas: %d", total)
+
+    # Asegurar que existan todas las categorías para evitar gráficos incompletos
+    for label in ["0. Normal", "1. Extensa", "2. Muy Extensa"]:
+        if label not in extensa_counter: extensa_counter[label] = 0
+    
+    for label in ["0", "1"]:
+        if label not in hidratacion_counter: hidratacion_counter[label] = 0
 
     top_geoclusters = geocluster_counter.most_common(15)
     
@@ -162,74 +186,118 @@ def feature_eda(input_csv: Path, output_csv: Path, logger: logging.Logger) -> No
         ],
     )
     
+    # --- TABLAS (8) ---
     write_text_table(
-        output_dir / "hidratacion_table.txt",
-        "Distribucion de Necesidad de Hidratacion",
-        ["Nivel", "Frecuencia"],
-        sorted(hidratacion_counter.items()),
+        output_dir / "1_embedding_table.txt",
+        "Distribucion de Texto para Embedding (Status)",
+        ["Status", "Frecuencia"],
+        sorted(embedding_counter.items()),
     )
 
     write_text_table(
-        output_dir / "geoclusters_table.txt",
-        "Distribucion de Geocluster",
-        ["Nivel", "Frecuencia"],
-        sorted(geocluster_counter.items()),
-    )
-
-    write_text_table(
-        output_dir / "riesgo_pii_table.txt",
+        output_dir / "2_riesgo_pii_table.txt",
         "Distribucion de Riesgo PII",
         ["Nivel", "Frecuencia"],
         sorted(riesgo_counter.items()),
     )
-    
+
     write_text_table(
-        output_dir / "duracion_resolucion_table.txt",
+        output_dir / "3_duracion_resolucion_table.txt",
         "Duracion de Resolucion (Buckets)",
         ["Bucket (Dias)", "Frecuencia"],
         sorted(duracion_buckets.items()),
     )
 
     write_text_table(
-        output_dir / "complejidad_table.txt",
+        output_dir / "4_hidratacion_table.txt",
+        "Distribucion de Necesidad de Hidratacion",
+        ["Nivel", "Frecuencia"],
+        sorted(hidratacion_counter.items()),
+    )
+
+    write_text_table(
+        output_dir / "5_geoclusters_table.txt",
+        "Distribucion de Geocluster (Top 15)",
+        ["Localidad", "Frecuencia"],
+        top_geoclusters,
+    )
+
+    write_text_table(
+        output_dir / "6_complejidad_table.txt",
         "Distribucion de Complejidad de Caso",
         ["Nivel (1-5)", "Frecuencia"],
         sorted(complejidad_counter.items()),
     )
 
     write_text_table(
-        output_dir / "prioridad_table.txt",
+        output_dir / "7_prioridad_table.txt",
         "Distribucion de Prioridad de Atencion",
         ["Prioridad", "Frecuencia"],
         sorted(prioridad_counter.items()),
     )
 
+    write_text_table(
+        output_dir / "8_sentencia_extensa_table.txt",
+        "Distribucion de Sentencias Extensas",
+        ["Tipo", "Frecuencia"],
+        sorted(extensa_counter.items()),
+    )
+
+    # --- GRAFICOS (8) ---
     make_png_bar_chart(
-        output_dir / "riesgo_pii.png",
-        "Niveles de Riesgo PII (Mejorado)",
+        output_dir / "1_embedding.png",
+        "Calidad del Texto para Embedding",
+        [label for label, _ in sorted(embedding_counter.items())],
+        [value for _, value in sorted(embedding_counter.items())],
+    )
+
+    make_png_bar_chart(
+        output_dir / "2_riesgo_pii.png",
+        "Niveles de Riesgo PII",
         [label for label, _ in sorted(riesgo_counter.items())],
         [value for _, value in sorted(riesgo_counter.items())],
     )
-    
+
     make_png_bar_chart(
-        output_dir / "geoclusters.png",
+        output_dir / "3_duracion_resolucion.png",
+        "Duracion de Resolucion (Buckets)",
+        [label for label, _ in sorted(duracion_buckets.items())],
+        [value for _, value in sorted(duracion_buckets.items())],
+    )
+
+    make_png_bar_chart(
+        output_dir / "4_necesita_hidratacion.png",
+        "Necesidad de Hidratacion",
+        ["No (0)", "Si (1)"],
+        [hidratacion_counter["0"], hidratacion_counter["1"]],
+    )
+
+    make_png_bar_chart(
+        output_dir / "5_geoclusters.png",
         "Top 15 Ubicacion Geocluster",
         [label for label, _ in top_geoclusters],
         [value for _, value in top_geoclusters],
     )
 
     make_png_bar_chart(
-        output_dir / "complejidad.png",
+        output_dir / "6_complejidad.png",
         "Distribucion de Complejidad",
         [label for label, _ in sorted(complejidad_counter.items())],
         [value for _, value in sorted(complejidad_counter.items())],
     )
 
     make_png_bar_chart(
-        output_dir / "necesita_hidratacion.png",
-        "Necesidad de Hidratacion (Criterio Estricto)",
-        ["No Necesita", "Necesita (1)"] if "1" in hidratacion_counter else [label for label, _ in sorted(hidratacion_counter.items())],
-        [value for _, value in sorted(hidratacion_counter.items())],
+        output_dir / "7_prioridad_atencion.png",
+        "Prioridad de Atencion",
+        [label for label, _ in sorted(prioridad_counter.items())],
+        [value for _, value in sorted(prioridad_counter.items())],
+    )
+
+    make_png_bar_chart(
+        output_dir / "8_sentencia_extensa.png",
+        "Distribucion de Sentencias por Extension",
+        ["Normal", "Extensa", "Muy Extensa"],
+        [extensa_counter["0. Normal"], extensa_counter["1. Extensa"], extensa_counter["2. Muy Extensa"]],
     )
 
     logger.info("Feature engineering completado: %d filas", total)
