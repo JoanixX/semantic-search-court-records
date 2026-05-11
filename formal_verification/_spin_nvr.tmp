@@ -1,0 +1,20 @@
+never liveness_property {    /* !([] ((! ((processed_items<15))) || (<> ((processed_items==15))))) */
+T0_init:
+	do
+	:: (! ((! ((processed_items<15)))) && ! (((processed_items==15)))) -> goto accept_S4
+	:: (1) -> goto T0_init
+	od;
+accept_S4:
+	do
+	:: (! (((processed_items==15)))) -> goto accept_S4
+	od;
+}
+never safety_buffer {    /* !([] ((buffer_count<=5))) */
+T0_init:
+	do
+	:: atomic { (! (((buffer_count<=5)))) -> assert(!(! (((buffer_count<=5))))) }
+	:: (1) -> goto T0_init
+	od;
+accept_all:
+	skip
+}
